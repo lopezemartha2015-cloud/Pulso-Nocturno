@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Pulso Nocturno: la vida nocturna de Roma Norte y Condesa como el ritmo de un metrónomo.">
+<title>Pulso Nocturno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,200;0,300;0,400;0,500;1,300&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: editorial en retícula de 12 columnas (1180px). Cada sección: etiqueta en col 1–3, contenido en col 4–12.
+   Orden de lectura: portada → fenómeno → contexto → datos (mapa, lugares, zonas, densidad, tabla) → pregunta → paso a 02. */
+:root{
+  --bg:#050507; --bg-2:#0A090E; --line:#1F1C26; --line-2:#34303D;
+  --ink:#F4F1F8; --ink-2:#BCB6C7; --ink-3:#8C8698;
+  --roma:#9D70FA; --roma-2:#C9B2FF; --cond:#F7468A; --cond-2:#FF9CC2;
+  --map-bg:#07060A; --map-street:#26232D; --map-park:#0C1712;
+  --f-display:"Jost","Futura","Avenir Next","Century Gothic",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--f-display);font-weight:300;font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.kicker{margin:0;font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* barra de pantallas (compartida por las 3) */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(5,5,7,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:56px}
+.brand{font-family:var(--f-mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2);text-decoration:none;white-space:nowrap}
+.steps{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.steps a{display:flex;align-items:center;gap:8px;padding:8px 12px;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);text-decoration:none;border-bottom:1px solid transparent;white-space:nowrap}
+.steps a b{font-weight:400;color:var(--ink-3)}
+.steps a:hover{color:var(--ink)}
+.steps a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--ink)}
+
+/* ---------- portada ---------- */
+.cover{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px 48px;align-items:start;padding-block:48px 40px}
+.byline{margin:0 0 18px;font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.title{margin:0;font-weight:200;font-size:clamp(58px,10.4vw,150px);line-height:.88;letter-spacing:.03em;text-transform:uppercase}
+.title span{display:block;animation:rise 1s cubic-bezier(.2,.7,.2,1) both}
+.title .b{color:var(--cond);animation-delay:.12s}
+@keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+.question{margin:22px 0 0;font-weight:300;font-style:italic;font-size:clamp(20px,2.2vw,26px);letter-spacing:.06em;color:var(--ink)}
+.cover-r{display:flex;flex-direction:column;align-items:flex-end;gap:10px;text-align:right}
+.date{font-weight:300;font-size:22px;letter-spacing:.3em;text-transform:uppercase}
+.clock{display:flex;font-weight:200;font-size:clamp(60px,8vw,104px);line-height:.95;letter-spacing:.04em}
+.clock .dg{display:inline-block;width:.6em;text-align:center}
+.clock .col{display:inline-block;width:.32em;text-align:center}
+.clock .dg.roll{animation:roll .45s cubic-bezier(.2,.7,.2,1)}
+@keyframes roll{from{opacity:0;transform:translateY(-.35em)}to{opacity:1;transform:none}}
+.pill{display:flex;align-items:center;gap:12px;margin-top:6px;padding:10px 14px;border:1px solid color-mix(in srgb,var(--cond) 55%,transparent);border-radius:12px;text-decoration:none;text-align:left}
+.pill .dot{position:relative;width:10px;height:10px;border-radius:50%;background:var(--cond);flex:none}
+.pill .dot::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1px solid var(--cond);animation:ping 1.8s ease-out infinite}
+.pill.hab{border-color:var(--line-2)}.pill.hab .dot{background:var(--ink-3)}.pill.hab .dot::after{display:none}
+@keyframes ping{from{transform:scale(.6);opacity:.9}to{transform:scale(1.7);opacity:0}}
+.pill .l1{display:block;font-size:14px;font-weight:400}.pill .l2{display:block;font-size:12px;color:var(--ink-3)}
+
+/* ---------- secciones con retícula ---------- */
+.sec{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:72px 0}
+.sec > .lab{grid-column:1 / span 3}
+.sec > .body{grid-column:4 / span 9;min-width:0}
+.lab .n{display:block;font-family:var(--f-mono);font-size:12px;color:var(--ink-3)}
+.lab h2{margin:6px 0 0;font-family:var(--f-mono);font-weight:400;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+.h{margin:0;font-weight:300;font-size:clamp(28px,3.6vw,44px);line-height:1.15;text-wrap:balance}
+.lede{margin:18px 0 0;font-size:20px;line-height:1.55;color:var(--ink);max-width:62ch;text-wrap:pretty}
+.p{margin:14px 0 0;color:var(--ink-2);max-width:64ch}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 40px;margin-top:28px}
+.two h3{margin:0 0 6px;font-family:var(--f-mono);font-weight:400;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.two p{margin:0;color:var(--ink-2);font-size:16px}
+.pull{margin:28px 0 0;padding-left:20px;border-left:2px solid var(--cond);font-weight:200;font-size:clamp(22px,2.4vw,30px);line-height:1.35;max-width:32em}
+
+/* contexto: línea de tiempo */
+.tl{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;margin-top:32px;border-top:1px solid var(--line-2)}
+.tl li{position:relative;list-style:none;padding:20px 16px 0 0}
+.tl li::before{content:"";position:absolute;top:-5px;left:0;width:9px;height:9px;border-radius:50%;background:var(--bg);border:1.5px solid var(--ink-2)}
+.tl li.hot::before{background:var(--cond);border-color:var(--cond);box-shadow:0 0 10px var(--cond)}
+.tl .y{font-weight:200;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.tl .t{margin-top:8px;font-size:14px;color:var(--ink-2);line-height:1.45}
+.tl ol{margin:0;padding:0;display:contents}
+.ctx3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:40px;border-top:1px solid var(--line)}
+.ctx3 article{padding:20px 20px 0 0}
+.ctx3 article+article{padding-left:20px;border-left:1px solid var(--line)}
+.ctx3 h3{margin:0 0 8px;font-weight:400;font-size:20px}
+.ctx3 h3 small{display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:400;margin-bottom:4px}
+.ctx3 p{margin:0;color:var(--ink-2);font-size:15px}
+
+/* figuras */
+.fig{margin:32px 0 0}
+.fig-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;margin-bottom:14px}
+.fig-head h3{margin:6px 0 0;font-weight:300;font-size:clamp(20px,2.2vw,26px);line-height:1.25;max-width:42ch;text-wrap:balance}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0;font-family:var(--f-mono);font-size:12px;color:var(--ink-3)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.cap{margin:10px 0 0;font-family:var(--f-mono);font-size:11px;color:var(--ink-3);line-height:1.6}
+.full{grid-column:1 / -1}
+
+/* mapa */
+.mapf{position:relative;border:1px solid var(--line);background:var(--map-bg);overflow:hidden}
+#map{display:block;width:100%;height:auto}
+#map .st{fill:none}
+#map .st-P{stroke-width:4.4}#map .st-S{stroke-width:3}#map .st-T{stroke-width:2.2}#map .st-R{stroke-width:1.15}#map .st-W{stroke-width:.8}
+#map .base{stroke:var(--map-street)}
+#map .parks{fill:var(--map-park)}
+#map .zfill-r{fill:var(--roma)}#map .zfill-c{fill:var(--cond)}
+#map .zst-r{stroke:var(--roma);opacity:.42}#map .zst-c{stroke:var(--cond);opacity:.4}
+#map .zline{fill:none;stroke-width:1.8;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.8s cubic-bezier(.3,.6,.2,1) .25s forwards}
+#map .zline-r{stroke:var(--roma)}#map .zline-c{stroke:var(--cond)}
+#map .zinner{fill:none;stroke:var(--cond);stroke-opacity:.45;stroke-width:1;stroke-dasharray:2 5}
+@keyframes draw{to{stroke-dashoffset:0}}
+#map .lbl{font-family:var(--f-mono);font-size:10.5px;fill:#8E889A;paint-order:stroke;stroke:var(--map-bg);stroke-width:3px}
+#map .zl{font-family:var(--f-display);font-weight:300;font-size:25px;letter-spacing:.42em;fill:var(--ink);text-anchor:middle;paint-order:stroke;stroke:var(--map-bg);stroke-width:5px;stroke-opacity:.7}
+#map .v{cursor:pointer}
+#map .v .h{transition:r .7s,opacity .7s}
+#map .v .c{transition:r .7s,opacity .7s}
+#map .pin .ring{fill:var(--map-bg);stroke:var(--ink);stroke-width:2}
+#map .pin .pulse{fill:none;stroke-width:1.5;transform-box:fill-box;transform-origin:center;animation:pinp 2.2s ease-out infinite}
+@keyframes pinp{from{transform:scale(.8);opacity:.9}to{transform:scale(2.6);opacity:0}}
+#map .chip rect{fill:rgba(7,6,10,.88);stroke-width:1.2}
+#map .chip text{font-family:var(--f-mono);font-size:12px;font-weight:500;letter-spacing:.1em;fill:var(--ink)}
+.tip{position:absolute;z-index:5;pointer-events:none;padding:8px 10px;background:rgba(10,9,14,.95);border:1px solid var(--line-2);font-size:13px;line-height:1.35;opacity:0;transition:opacity .12s}
+.tip.on{opacity:1}.tip .a{font-weight:400}.tip .b{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.rail{display:flex;align-items:center;gap:16px;margin-top:12px;flex-wrap:wrap}
+.hours{display:flex;gap:2px;overflow-x:auto;min-width:0;flex:1 1 auto;scrollbar-width:thin}
+.hr{position:relative;flex:1 0 auto;min-width:54px;padding:10px 6px 12px;font-family:var(--f-mono);font-size:13px;color:var(--ink-3);border-top:1px solid var(--line-2);text-align:center}
+.hr:hover{color:var(--ink)}
+.hr.on{color:var(--ink);border-top:2px solid var(--ink);padding-top:9px}
+.hr .lv{position:absolute;top:4px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--cond)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border:1px solid var(--line-2);font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+.btn:hover{border-color:var(--ink)}
+.btn .ic{width:10px;height:12px;display:inline-block;background:currentColor;clip-path:polygon(0 0,100% 50%,0 100%)}
+.btn[aria-pressed="true"] .ic{clip-path:polygon(0 0,35% 0,35% 100%,0 100%,0 0,65% 0,100% 0,100% 100%,65% 100%,65% 0)}
+.seg{display:inline-flex;border:1px solid var(--line-2)}
+.seg button{padding:9px 13px;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.seg button+button{border-left:1px solid var(--line-2)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+/* lugares */
+.places{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 48px;margin-top:40px}
+.place{border-top:2px solid var(--zc);padding-top:20px;min-width:0}
+.place .zn{margin:0;font-weight:300;font-size:28px;letter-spacing:.14em;text-transform:uppercase}
+.place .pl{margin:4px 0 0;font-size:16px;color:var(--ink-2)}.place .pl b{font-weight:400;color:var(--ink)}
+.place .pl .n{display:inline-grid;place-items:center;width:20px;height:20px;margin-left:8px;border:1px solid var(--zc);border-radius:50%;font-family:var(--f-mono);font-size:11px;color:var(--ink);vertical-align:2px}
+.kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
+.kpi .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.kpi .v{font-weight:200;font-size:clamp(40px,4.4vw,58px);line-height:1;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:.38em;color:var(--ink-2);margin-left:2px}
+.kpi .main .v{color:var(--ink)}
+.kpi .d .v{color:var(--zc2)}
+.idx{position:relative;height:8px;margin-top:16px;background:#16131C}
+.idx i{position:absolute;left:0;top:0;bottom:0;background:var(--zc);transition:width .7s cubic-bezier(.2,.7,.2,1)}
+.idx b{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);transition:left .7s cubic-bezier(.2,.7,.2,1)}
+.idx-k{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.place .say{margin:12px 0 0;font-size:15px;color:var(--ink-2);min-height:3em}
+.place .say b{font-weight:500;color:var(--ink)}
+.pop{margin-top:16px}
+.pop-h{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+.pop svg{display:block;width:100%;height:auto;overflow:visible}
+.pop .xl{font-family:var(--f-mono);font-size:12px;fill:var(--ink-3);text-anchor:middle}
+.pop .xl.on{fill:var(--ink)}
+
+/* zonas por hora */
+#zchart{display:block;width:100%;height:auto;overflow:visible}
+#zchart .grid line{stroke:var(--line)}
+#zchart .grid text,#zchart .xl{font-family:var(--f-mono);font-size:12px;fill:var(--ink-3)}
+#zchart .xl{text-anchor:middle}
+#zchart .xl.on{fill:var(--ink)}
+#zchart .ln{fill:none;stroke-width:2.6;stroke-linecap:round}
+#zchart .pk text{font-family:var(--f-mono);font-size:12px;fill:var(--ink);text-anchor:middle}
+#zchart .dl{font-size:15px;font-weight:400}
+#zchart .guide{stroke:var(--ink);stroke-opacity:.55;stroke-dasharray:3 4}
+#zchart .gt rect{fill:var(--ink)}#zchart .gt text{font-family:var(--f-mono);font-size:11px;fill:var(--bg);text-anchor:middle}
+#zchart .hit{fill:transparent;cursor:crosshair}
+
+/* densidad */
+.dens{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 48px;margin-top:8px}
+.dz{border-top:1px solid var(--line-2);padding-top:16px}
+.dz .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--zc2)}
+.dz .v{font-weight:200;font-size:clamp(52px,6vw,80px);line-height:1;font-variant-numeric:tabular-nums}
+.dz .v small{display:block;margin-top:6px;font-size:14px;font-family:var(--f-mono);color:var(--ink-2);letter-spacing:.08em;text-transform:uppercase}
+.dz .s{margin:6px 0 0;font-size:14px;color:var(--ink-2)}
+.dots{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}
+.dots i{width:11px;height:11px;border-radius:50%;background:var(--zc);opacity:.85}
+.dots i.n{background:none;border:2px solid var(--zc)}
+.dots i.p{opacity:.45}
+.dens-k{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px;font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.dens-k i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px;background:var(--ink-2)}
+.dens-k i.n{background:none;border:2px solid var(--ink-2)}.dens-k i.p{opacity:.45}
+
+/* tabla */
+.tbl{width:100%;border-collapse:collapse;margin-top:8px;font-size:15px}
+.tbl th{padding:10px 12px 10px 0;text-align:left;font-family:var(--f-mono);font-weight:400;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+.tbl td{padding:14px 12px 14px 0;vertical-align:top;border-bottom:1px solid var(--line);color:var(--ink-2)}
+.tbl td:first-child{color:var(--ink);font-weight:400}
+.tbl-wrap{overflow-x:auto}
+
+.rq{grid-column:1 / -1;margin:0;padding-block:24px 0;font-weight:200;font-size:clamp(30px,4.4vw,58px);line-height:1.12;text-wrap:balance}
+.rq b{font-weight:300;color:var(--cond)}
+.next{margin-top:96px;padding-block:72px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center}
+.next p{margin:0;font-weight:200;font-size:clamp(34px,5vw,64px);line-height:1.1}
+.next .a{color:var(--ink-3)}
+.zbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:32px}
+.zbtn{display:inline-flex;align-items:center;gap:12px;padding:14px 20px;border:1px solid var(--zc);text-decoration:none;font-family:var(--f-mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;transition:background .25s,color .25s}
+.zbtn i{width:9px;height:9px;border-radius:50%;background:var(--zc)}
+.zbtn:hover{background:var(--zc);color:var(--bg)}.zbtn:hover i{background:var(--bg)}
+.foot{padding-block:28px 56px;font-family:var(--f-mono);font-size:11px;color:var(--ink-3);line-height:1.8}
+.foot a{color:var(--ink-2)}
+
+@media (max-width:960px){
+  .cover{grid-template-columns:1fr}.cover-r{align-items:flex-start;text-align:left}
+  .sec > .lab,.sec > .body{grid-column:1 / -1}
+  .sec > .lab{margin-bottom:14px}
+  .tl{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:28px}
+  .ctx3,.places,.dens,.two{grid-template-columns:1fr}
+  .ctx3 article+article{padding-left:0;border-left:0;border-top:1px solid var(--line);padding-top:20px;margin-top:20px}
+}
+@media (max-width:560px){
+  .brand{display:none}.topbar .wrap{justify-content:center}
+  .steps a{padding:8px 7px;font-size:11px}
+  .tl{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi .v{font-size:36px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}#map .zline{stroke-dashoffset:0}}
+
+/* ===== ajustes del diseño final ===== */
+.ctxill{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:44px;align-items:end}
+.ctxill .ill{width:86%;max-width:260px}
+.ctxill .ill+.ill{margin-left:20px}
+.ctx3{margin-top:22px}
+.next{position:relative;margin-top:240px}
+.mph-wrap{position:absolute;left:50%;top:0;transform:translate(-50%,-88%);width:300px;padding:10px 26px 0;background:radial-gradient(70% 70% at 50% 60%,rgba(157,112,250,.07),transparent 72%),var(--bg)}
+.mph-wrap .mph{width:100%;max-width:none;margin:0}
+@media (max-width:960px){.ctxill{grid-template-columns:1fr;gap:18px}.ctxill .ill+.ill{margin-left:0}.ctxill .ill{width:100%;max-width:340px}}
+@media (max-width:560px){.mph-wrap{width:230px;padding:8px 16px 0}.next{margin-top:200px}}
+
+/* ===== ilustraciones animadas ===== */
+.ill{display:block;height:auto;color:var(--ink-2);overflow:visible}
+.ill .fk{fill:var(--ink);stroke:none}.ill .fr{fill:var(--roma);stroke:none}.ill .fc{fill:var(--cond);stroke:none}.ill .fw{fill:var(--warn,#FFB547);stroke:none}.ill .fa{fill:rgb(var(--acc-rgb));stroke:none}.ill .fpark{fill:var(--map-park,#0C1712);stroke:none}
+.ill .k{stroke:var(--ink)}.ill .m{stroke:var(--ink-3)}.ill .d{stroke:var(--line-2)}.ill .r{stroke:var(--roma)}.ill .c{stroke:var(--cond)}.ill .w{stroke:var(--warn,#FFB547)}.ill .a{stroke:rgb(var(--acc-rgb))}
+.ill .dr{stroke-dasharray:1 1;stroke-dashoffset:1}
+.ill.in .dr{animation:ill-draw 1.8s cubic-bezier(.45,.05,.2,1) forwards}
+.ill text,.ill [class^="f"],.ill .glow,.ill .win{opacity:0}
+.ill.in text,.ill.in .glow,.ill.in .win,.ill.in [class^="f"]{animation:ill-fade .8s .9s forwards}
+@keyframes ill-draw{to{stroke-dashoffset:0}}
+@keyframes ill-fade{to{opacity:1}}
+.ill *{transform-box:fill-box}
+.ill [style*="transform-origin"]{transform-box:view-box}
+.ill.on .bob{animation:i-bob 1.1s ease-in-out infinite alternate;transform-origin:50% 100%}
+.ill.on .dance{animation:i-dance .48s ease-in-out infinite alternate;transform-origin:50% 100%}
+.ill.on .idle{animation:i-bob 2.4s ease-in-out infinite alternate;transform-origin:50% 100%}
+.ill.on .wv{animation:i-wave 1.8s ease-out infinite}
+.ill.on .swing{animation:i-swing 1.15s ease-in-out infinite alternate}
+.ill.on .spin{animation:i-spin 3.2s linear infinite}
+.ill.on .float{animation:i-float 3s ease-in-out infinite}
+.ill.on .thump{animation:i-thump .48s ease-out infinite}
+.ill.on .flick{animation:i-flick 5s linear infinite}
+.ill.on .glow{animation:i-glow 2.6s ease-in-out infinite alternate;opacity:1}
+.ill.on .win{animation:i-win 4.2s ease-in-out infinite;opacity:1}
+.ill.on .doorlight{animation:i-win 1.9s ease-in-out infinite}
+.ill.on .run{stroke-dasharray:.06 .94;animation:i-run 3.4s linear infinite;stroke-linecap:round}
+.ill.on .run2{stroke-dasharray:.05 .95;animation:i-run 5.2s linear infinite}
+.ill .run,.ill .run2{stroke-dasharray:0 1}
+.ill.on .walk{animation:i-walk 7s ease-in-out infinite alternate}
+.ill.on .shake{animation:i-shake 2.4s ease-in-out infinite}
+.ill.on .sway{animation:i-sway 3s ease-in-out infinite alternate}
+.ill.on .bounce{animation:i-bounce 1.4s cubic-bezier(.3,.6,.4,1) infinite}
+.ill.on .blink{animation:i-blink 4.5s ease-in-out infinite}
+.ill.on .tilt{animation:i-tilt 3.6s ease-in-out infinite alternate}
+.ill.on .push{animation:i-push 1.6s ease-in-out infinite}
+.ill.on .wander{animation:i-wander 5s ease-in-out infinite}
+.ill.on .hitL{animation:i-hitL .48s ease-in-out infinite}
+.ill.on .hitR{animation:i-hitR .48s ease-in-out infinite .24s}
+.ill.on .dash{animation:i-dash 1.8s linear infinite}
+@keyframes i-bob{to{transform:translateY(-2.5px)}}
+@keyframes i-dance{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-3px) rotate(4deg)}}
+@keyframes i-wave{0%{opacity:.15}35%{opacity:1}100%{opacity:.15}}
+@keyframes i-swing{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
+@keyframes i-spin{to{transform:rotate(360deg)}}
+@keyframes i-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes i-thump{0%{transform:scale(1.07)}100%{transform:scale(1)}}
+@keyframes i-flick{0%,18%,22%,24%,60%,100%{opacity:1}20%,23%{opacity:.25}61%{opacity:.5}}
+@keyframes i-glow{from{opacity:.45}to{opacity:1}}
+@keyframes i-win{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes i-run{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes i-walk{from{transform:translateX(-10px)}to{transform:translateX(8px)}}
+@keyframes i-shake{0%,70%,100%{transform:rotate(0)}75%{transform:rotate(-4deg)}85%{transform:rotate(4deg)}}
+@keyframes i-sway{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+@keyframes i-bounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+@keyframes i-blink{0%,44%,50%,100%{transform:scaleY(1)}47%{transform:scaleY(.1)}}
+@keyframes i-tilt{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+@keyframes i-push{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+@keyframes i-wander{0%,100%{transform:translate(0,0)}33%{transform:translate(3px,-2px)}66%{transform:translate(-2px,2px)}}
+@keyframes i-hitL{0%,100%{transform:rotate(0)}50%{transform:rotate(12deg)}}
+@keyframes i-hitR{0%,100%{transform:rotate(0)}50%{transform:rotate(-12deg)}}
+@keyframes i-dash{to{stroke-dashoffset:-12}}
+@media (prefers-reduced-motion:reduce){.ill .dr{stroke-dasharray:none;stroke-dashoffset:0}.ill text,.ill [class^="f"],.ill .glow,.ill .win{opacity:1}.ill *{animation:none!important}}
+
+/* ===== fondo en movimiento y apariciones ===== */
+#bgfx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
+main,.topbar,footer{position:relative;z-index:1}
+.topbar{z-index:20}
+.rv{opacity:0;transform:translateY(26px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--rd,0) * 95ms)}
+.rv.rv-l{transform:translateX(-26px)}
+.rv.rv-s{transform:scale(.97)}
+.rv.in{opacity:1;transform:none}
+.rv-line{display:block;overflow:hidden}
+.rule-rv{position:relative}
+.rule-rv::after{content:"";position:absolute;left:0;top:-1px;height:1px;width:100%;background:currentColor;transform-origin:left;transform:scaleX(0);transition:transform 1.4s cubic-bezier(.3,.6,.2,1)}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}#bgfx{display:none}}
+
+/* ---- ajustes de diseño ---- */
+
+.dens{margin-top:30px}
+.dots i.p,.dens-k i.p{margin:0}
+.dens-k span{display:inline-flex;align-items:center}
+.dens-k i{vertical-align:0}
+
+
+/* ---- ajustes de diseño ---- */
+
+.mph-wrap{background:none}
+.next{border-top:0}
+.next::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,var(--line) calc(50% - 170px),transparent calc(50% - 170px),transparent calc(50% + 170px),var(--line) calc(50% + 170px))}
+@media (max-width:560px){.next::before{background:linear-gradient(90deg,var(--line) calc(50% - 130px),transparent calc(50% - 130px),transparent calc(50% + 130px),var(--line) calc(50% + 130px))}}
+.ctxill{align-items:end}
+.ctxill .ill{display:block;height:150px;width:auto;max-width:100%}
+.ctxill .ill:first-child{-webkit-mask-image:radial-gradient(70% 72% at 50% 50%,#000 55%,transparent 100%);mask-image:radial-gradient(70% 72% at 50% 50%,#000 55%,transparent 100%)}
+@media (max-width:960px){.ctxill .ill{height:auto;width:100%;max-width:340px}}
+
+
+/* ---- una sola pantalla ---- */
+
+.offstage{position:absolute!important;left:-12000px;top:0;width:1100px;height:0;overflow:hidden;visibility:hidden;pointer-events:none}
+.one{display:grid;box-sizing:border-box}
+.one > div{min-width:0;min-height:0}
+.one > div > *{animation:oneIn .9s cubic-bezier(.2,.7,.2,1) both}
+.one > div > *:nth-child(2){animation-delay:.08s}.one > div > *:nth-child(3){animation-delay:.16s}.one > div > *:nth-child(4){animation-delay:.24s}.one > div > *:nth-child(5){animation-delay:.32s}.one > div > *:nth-child(6){animation-delay:.4s}
+@keyframes oneIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+body.is-one main.wrap{max-width:1440px}
+body.is-one .foot{display:none}
+@media (prefers-reduced-motion:reduce){.one > div > *{animation:none}}
+
+.one{grid-template-columns:auto minmax(0,1fr);gap:0 44px;height:calc(100svh - 82px);padding-block:18px 10px;align-items:stretch}
+body.is-one main.wrap{margin-top:0;padding-top:0;padding-bottom:0}
+.one-map{display:flex;flex-direction:column}
+.one-map figure{margin:0;display:flex;flex-direction:column;height:100%}
+.one-map .fig-head{margin:0 0 10px}
+.one-map .legend{margin:0;font-size:11px}
+.one-map .mapf{flex:none;height:calc(100svh - 82px - 28px - 40px - 60px);aspect-ratio:1050 / 880;width:auto;max-width:56vw}
+.one-map #map{width:100%;height:100%}
+.one-map .rail{margin-top:10px}
+.one-map .cap{display:none}
+.one-info{display:flex;flex-direction:column;gap:min(14px,1.6svh);overflow:hidden}
+.one-info .byline{margin:0;font-size:10px;letter-spacing:.14em}
+.one-info .title{font-size:min(4.6vw,8.2svh);line-height:.9}
+.one-info .question{margin:0;font-size:min(1.3vw,2.3svh)}
+.one-clock{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding-top:12px;border-top:1px solid var(--line)}
+.one-clock .date{font-size:13px;letter-spacing:.24em}
+.one-clock .clock{font-size:min(3vw,5.4svh);line-height:1}
+.one-clock .pill{margin:0;padding:7px 10px}
+.one-clock .pill .l1{font-size:12.5px}.one-clock .pill .l2{font-size:11px}
+.one-lede{margin:0;font-size:min(14px,1.8svh);line-height:1.5;color:var(--ink-2);max-width:46ch}
+.one-info figure{margin:0;padding-top:12px;border-top:1px solid var(--line)}
+.one-info .fig-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.one-info .fig-head h3{margin:4px 0 0;font-size:min(15px,1.9svh);line-height:1.4;font-weight:300}
+.one-info .fig-head .kicker{font-size:10.5px}
+.one-info figure .legend{margin:8px 0 0;font-size:11px}
+.one-info #zchart{max-height:22svh}
+.one-info figure{flex:none}
+.one-info figure .legend{display:none}
+.one-info{padding-bottom:4px}
+@media (max-height:820px){.one-lede,.one-info .byline{display:none}.one-info #zchart{max-height:17svh}.one-info .fig-head h3{font-size:13px}.one-info .seg button{padding:6px 10px}.one-info .zbtn{padding:9px 14px;font-size:11px}.one-clock .pill .l2{display:none}}
+.one-info figure .cap{display:none}
+.one-info .zbtns{justify-content:flex-start;margin-top:auto;gap:10px}
+.one-info .zbtn{padding:11px 16px;font-size:12px}
+@media (max-width:1000px),(max-height:620px){
+  .one{grid-template-columns:1fr;height:auto;gap:24px}
+  .one-map .mapf{max-width:none;width:100%;flex:none}
+  .one-info{overflow:visible}
+}
+
+</style>
+
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">Pulso Nocturno</a>
+    <nav class="steps" aria-label="Pantallas">
+      <a href="index.html" aria-current="page"><b>01</b>Entender</a>
+      <a href="explorar.html"><b>02</b>Experimentar</a>
+      <a href="bitacora.html"><b>03</b>Reflexionar</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- ===== PORTADA ===== -->
+  <section class="cover" aria-labelledby="t1">
+    <div>
+      <p class="byline">Taller de visualización de datos e información · Martha Ivonne López Eckert</p>
+      <h1 id="t1" class="title"><span>Pulso</span><span class="b">Nocturno</span></h1>
+      <p class="question">¿Dónde está la fiesta en CDMX en este momento?</p>
+    </div>
+    <div class="cover-r">
+      <div class="date" id="date">Viernes</div>
+      <div class="clock" id="clock">23:00</div>
+      <a class="pill" id="pill" href="https://support.google.com/business/answer/6263531?hl=es" target="_blank" rel="noopener">
+        <span class="dot" aria-hidden="true"></span>
+        <span><span class="l1" id="pillL1">Noche de referencia · viernes</span><span class="l2" id="pillL2">Google Maps · horarios de mayor concurrencia</span></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== 1 FENÓMENO ===== -->
+  <section class="sec" aria-labelledby="s1">
+    <div class="lab"><span class="n">01.1</span><h2 id="s1">El fenómeno</h2></div>
+    <div class="body">
+      <p class="h">La noche de la CDMX no es constante: se enciende, llega a un punto máximo y se apaga.</p>
+      <p class="lede">La vida nocturna de la ciudad cambia conforme avanza la noche. Algunas zonas comienzan con poca actividad, aumentan su afluencia, alcanzan un punto máximo y después disminuyen. En Roma Norte y Condesa, dos colonias vecinas con la mayor concentración de bares y antros del centro-poniente, ese ciclo ocurre cada fin de semana, pero no al mismo tiempo.</p>
+      <div class="two">
+        <div><h3>¿Por qué importa?</h3><p>Permite observar cómo cambia la concentración de personas y la actividad de bares y antros a lo largo de la noche, haciendo visible el ritmo nocturno de distintas zonas de la ciudad.</p></div>
+        <div><h3>Qué hace esta pantalla</h3><p>Muestra primero los datos: dónde están los lugares, qué tan llenos están ahora, cómo cambia cada zona por hora y cuántos establecimientos hay por km². El ritmo llega en la pantalla 02.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 2 CONTEXTO ===== -->
+  <section class="sec" aria-labelledby="s2">
+    <div class="lab"><span class="n">01.2</span><h2 id="s2">Contexto social, cultural y urbano</h2></div>
+    <div class="body">
+      <p class="h">Dos colonias de principios del siglo XX que hoy concentran la noche, el turismo y la disputa por vivir en ellas.</p>
+      <p class="p">Roma Norte y Condesa nacieron como fraccionamientos para las élites porfirianas y posrevolucionarias. Tras décadas de deterioro y el sismo de 1985, galerías, cafés y bares las reactivaron. Desde 2020 la llegada de trabajo remoto y rentas de corta estancia aceleró su transformación: la fiesta es hoy parte de su economía y también de sus conflictos.</p>
+      <div class="ctxill" aria-hidden="false"><svg class="ill ctxi" viewBox="0 0 520 300" role="img" aria-label="Corredores de la noche: Álvaro Obregón en Roma Norte y el anillo de Ámsterdam en Condesa" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="d dr" stroke-width="1" d="M10 10 V290 M56 10 V290 M102 10 V290 M148 10 V290 M194 10 V290 M240 10 V290 M286 10 V290 M332 10 V290 M378 10 V290 M424 10 V290 M470 10 V290 M516 10 V290 M0 30 H520 M0 70 H520 M0 110 H520 M0 150 H520 M0 190 H520 M0 230 H520 M0 270 H520" pathLength="1"/><path class="r dr" stroke-width="3.2" d="M10 270 C120 220 200 170 300 120 S450 40 510 20" pathLength="1"/><path class="r dr" d="M60 150 C120 140 190 110 250 60" pathLength="1"/><path class="r run nodr" stroke-width="5" stroke-opacity=".9" pathLength="1" d="M10 270 C120 220 200 170 300 120 S450 40 510 20"/><ellipse class="c dr" stroke-width="3.2" cx="360" cy="210" rx="110" ry="58" pathLength="1"/><ellipse class="c run2 nodr" stroke-width="5" pathLength="1" cx="360" cy="210" rx="110" ry="58"/><ellipse class="c dr" stroke-width="1" stroke-dasharray="3 6" cx="360" cy="210" rx="74" ry="34" pathLength="1"/><ellipse class="d dr" cx="360" cy="210" rx="40" ry="16" pathLength="1"/><ellipse class="fpark dr" cx="360" cy="210" rx="40" ry="16" pathLength="1"/><g class="glow" style="animation-delay:0.00s"><circle class="fr" cx="50.0" cy="240.8" r="9" fill-opacity=".2"/><circle class="fr" cx="50.0" cy="240.8" r="3.6"/></g><g class="glow" style="animation-delay:0.31s"><circle class="fr" cx="90.0" cy="217.3" r="9" fill-opacity=".2"/><circle class="fr" cx="90.0" cy="217.3" r="3.6"/></g><g class="glow" style="animation-delay:0.62s"><circle class="fr" cx="145.0" cy="187.9" r="9" fill-opacity=".2"/><circle class="fr" cx="145.0" cy="187.9" r="3.6"/></g><g class="glow" style="animation-delay:0.93s"><circle class="fr" cx="185.0" cy="167.6" r="9" fill-opacity=".2"/><circle class="fr" cx="185.0" cy="167.6" r="3.6"/></g><g class="glow" style="animation-delay:1.24s"><circle class="fr" cx="230.0" cy="145.6" r="9" fill-opacity=".2"/><circle class="fr" cx="230.0" cy="145.6" r="3.6"/></g><g class="glow" style="animation-delay:1.55s"><circle class="fr" cx="270.0" cy="126.6" r="9" fill-opacity=".2"/><circle class="fr" cx="270.0" cy="126.6" r="3.6"/></g><g class="glow" style="animation-delay:1.86s"><circle class="fr" cx="325.0" cy="101.2" r="9" fill-opacity=".2"/><circle class="fr" cx="325.0" cy="101.2" r="3.6"/></g><g class="glow" style="animation-delay:2.17s"><circle class="fr" cx="365.0" cy="83.1" r="9" fill-opacity=".2"/><circle class="fr" cx="365.0" cy="83.1" r="3.6"/></g><g class="glow" style="animation-delay:2.48s"><circle class="fr" cx="420.0" cy="58.8" r="9" fill-opacity=".2"/><circle class="fr" cx="420.0" cy="58.8" r="3.6"/></g><g class="glow" style="animation-delay:0.00s"><circle class="fc" cx="470.0" cy="210.0" r="9" fill-opacity=".2"/><circle class="fc" cx="470.0" cy="210.0" r="3.6"/></g><g class="glow" style="animation-delay:0.27s"><circle class="fc" cx="453.3" cy="240.7" r="9" fill-opacity=".2"/><circle class="fc" cx="453.3" cy="240.7" r="3.6"/></g><g class="glow" style="animation-delay:0.54s"><circle class="fc" cx="408.2" cy="262.1" r="9" fill-opacity=".2"/><circle class="fc" cx="408.2" cy="262.1" r="3.6"/></g><g class="glow" style="animation-delay:0.81s"><circle class="fc" cx="348.5" cy="267.7" r="9" fill-opacity=".2"/><circle class="fc" cx="348.5" cy="267.7" r="3.6"/></g><g class="glow" style="animation-delay:1.08s"><circle class="fc" cx="292.3" cy="255.7" r="9" fill-opacity=".2"/><circle class="fc" cx="292.3" cy="255.7" r="3.6"/></g><g class="glow" style="animation-delay:1.35s"><circle class="fc" cx="256.6" cy="229.8" r="9" fill-opacity=".2"/><circle class="fc" cx="256.6" cy="229.8" r="3.6"/></g><g class="glow" style="animation-delay:1.62s"><circle class="fc" cx="252.4" cy="197.9" r="9" fill-opacity=".2"/><circle class="fc" cx="252.4" cy="197.9" r="3.6"/></g><g class="glow" style="animation-delay:1.89s"><circle class="fc" cx="280.9" cy="169.7" r="9" fill-opacity=".2"/><circle class="fc" cx="280.9" cy="169.7" r="3.6"/></g><g class="glow" style="animation-delay:2.16s"><circle class="fc" cx="333.4" cy="153.7" r="9" fill-opacity=".2"/><circle class="fc" cx="333.4" cy="153.7" r="3.6"/></g><g class="glow" style="animation-delay:2.43s"><circle class="fc" cx="394.0" cy="154.8" r="9" fill-opacity=".2"/><circle class="fc" cx="394.0" cy="154.8" r="3.6"/></g><g class="glow" style="animation-delay:2.70s"><circle class="fc" cx="444.3" cy="172.7" r="9" fill-opacity=".2"/><circle class="fc" cx="444.3" cy="172.7" r="3.6"/></g><g class="glow" style="animation-delay:2.97s"><circle class="fc" cx="468.9" cy="201.9" r="9" fill-opacity=".2"/><circle class="fc" cx="468.9" cy="201.9" r="3.6"/></g><text x="40" y="44" class="fr" font-family="IBM Plex Mono, monospace" font-size="17" letter-spacing="2">ÁLVARO OBREGÓN</text><text x="360" y="292" text-anchor="middle" class="fc" font-family="IBM Plex Mono, monospace" font-size="17" letter-spacing="2">ÁMSTERDAM</text></svg><svg class="ill ctxi" viewBox="0 0 520 300" role="img" aria-label="Del mezcal al reggaetón: copita, coctel, bocina y tornamesa" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="k dr" d="M10 230 H510" pathLength="1"/><path class="d dr" d="M10 240 H510" pathLength="1"/><path class="k dr" d="M40 140 H86 L80 228 H46 Z" pathLength="1"/><path class="c dr" stroke-width="2" d="M43 170 H83" pathLength="1"/><path class="c dr" stroke-width="2" d="M64 132 a14 14 0 0 1 22 -10" pathLength="1"/><path class="k dr" d="M110 120 H170 L140 160 Z M140 160 V222 M122 228 H158" pathLength="1"/><path class="r dr" stroke-width="2" d="M118 130 H162" pathLength="1"/><circle class="fr" cx="156" cy="136" r="4"/><path class="k dr" d="M200 60 H290 V228 H200 Z" pathLength="1"/><circle class="m dr" cx="245" cy="98" r="14" pathLength="1"/><g class="thump" style="transform-origin:245px 170px"><circle class="r dr" stroke-width="2" cx="245" cy="170" r="32" pathLength="1"/><circle class="fr" cx="245" cy="170" r="8"/></g><path class="r wv dr" style="animation-delay:0.00s" d="M302 150 a20 20 0 0 1 0 40" pathLength="1"/><path class="r wv dr" style="animation-delay:0.22s" d="M302 134 a36 36 0 0 1 0 72" pathLength="1"/><path class="r wv dr" style="animation-delay:0.44s" d="M302 118 a52 52 0 0 1 0 104" pathLength="1"/><path class="k dr" d="M360 170 H500 V228 H360 Z" pathLength="1"/><path class="m dr" stroke-width="2" d="M480 180 L456 204" pathLength="1"/><g class="spin" style="transform-origin:420px 196px"><circle class="k dr" cx="420" cy="196" r="22" pathLength="1"/><circle class="d dr" cx="420" cy="196" r="12" pathLength="1"/><path class="m dr" d="M420 176 V184" pathLength="1"/><circle class="fc" cx="420" cy="196" r="3"/></g><g class="float" style="animation-delay:0.0s"><path class="c dr" d="M380 70 v26 M380 70 l12 -4 v26" pathLength="1"/><circle class="fc" cx="377" cy="96" r="4"/><circle class="fc" cx="389" cy="92" r="4"/></g><g class="float" style="animation-delay:0.6s"><path class="r dr" d="M430 40 v26 M430 40 l12 -4 v26" pathLength="1"/><circle class="fr" cx="427" cy="66" r="4"/><circle class="fr" cx="439" cy="62" r="4"/></g><g class="float" style="animation-delay:1.2s"><path class="c dr" d="M470 90 v26 M470 90 l12 -4 v26" pathLength="1"/><circle class="fc" cx="467" cy="116" r="4"/><circle class="fc" cx="479" cy="112" r="4"/></g></svg><svg class="ill ctxi" viewBox="0 0 520 300" role="img" aria-label="Fiesta y vivienda: el bar entre casas, ruido y renta corta" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="k dr" d="M0 250 H520" pathLength="1"/><path class="d dr" d="M0 260 H520" pathLength="1"/><path class="k dr" d="M20 250 V130 L75.0 100 L130 130 V250" pathLength="1"/><rect class="fr win" style="animation-delay:0.0s" x="34" y="146" width="22" height="22" fill-opacity=".3"/><rect class="m dr" x="34" y="146" width="22" height="22" pathLength="1"/><rect class="m dr" x="94" y="146" width="22" height="22" pathLength="1"/><rect class="m dr" x="34" y="190" width="22" height="22" pathLength="1"/><rect class="fr win" style="animation-delay:2.1s" x="94" y="190" width="22" height="22" fill-opacity=".3"/><rect class="m dr" x="94" y="190" width="22" height="22" pathLength="1"/><path class="k dr" d="M190 250 V110 H330 V250" pathLength="1"/><rect class="c dr" x="214" y="124" width="92" height="28" pathLength="1"/><text class="fc flick" x="260" y="144" text-anchor="middle" font-family="Jost, sans-serif" font-size="17" letter-spacing="6">BAR</text><rect class="fr" x="206" y="170" width="108" height="80" fill-opacity=".14"/><rect class="k dr" x="206" y="170" width="108" height="80" pathLength="1"/><g class="r dance"><circle class="dr" cx="224" cy="222" r="3.6" pathLength="1"/><path class="dr" d="M224 226 V236.0 M219 248 L224 236.0 L229 248 M218 227 L224 232 L230 227" pathLength="1"/></g><g class="r dance" style="animation-delay:0.18s"><circle class="dr" cx="246" cy="222" r="3.6" pathLength="1"/><path class="dr" d="M246 226 V236.0 M241 248 L246 236.0 L251 248 M240 227 L246 232 L252 227" pathLength="1"/></g><g class="r dance" style="animation-delay:0.36s"><circle class="dr" cx="268" cy="222" r="3.6" pathLength="1"/><path class="dr" d="M268 226 V236.0 M263 248 L268 236.0 L273 248 M262 227 L268 232 L274 227" pathLength="1"/></g><g class="r dance" style="animation-delay:0.54s"><circle class="dr" cx="292" cy="222" r="3.6" pathLength="1"/><path class="dr" d="M292 226 V236.0 M287 248 L292 236.0 L297 248 M286 227 L292 232 L298 227" pathLength="1"/></g><path class="c wv dr" style="animation-delay:0.00s" d="M180 134 a16 16 0 0 0 0 32" pathLength="1"/><path class="c wv dr" style="animation-delay:0.22s" d="M180 120 a30 30 0 0 0 0 60" pathLength="1"/><path class="c wv dr" style="animation-delay:0.44s" d="M180 106 a44 44 0 0 0 0 88" pathLength="1"/><path class="c wv dr" style="animation-delay:0.00s" d="M340 134 a16 16 0 0 1 0 32" pathLength="1"/><path class="c wv dr" style="animation-delay:0.22s" d="M340 120 a30 30 0 0 1 0 60" pathLength="1"/><path class="c wv dr" style="animation-delay:0.44s" d="M340 106 a44 44 0 0 1 0 88" pathLength="1"/><path class="k dr" d="M390 250 V130 L445.0 100 L500 130 V250" pathLength="1"/><rect class="fc win" style="animation-delay:0.4s" x="404" y="146" width="22" height="22" fill-opacity=".3"/><rect class="m dr" x="404" y="146" width="22" height="22" pathLength="1"/><rect class="m dr" x="464" y="146" width="22" height="22" pathLength="1"/><rect class="m dr" x="404" y="190" width="22" height="22" pathLength="1"/><rect class="fc win" style="animation-delay:2.5s" x="464" y="190" width="22" height="22" fill-opacity=".3"/><rect class="m dr" x="464" y="190" width="22" height="22" pathLength="1"/><g class="sway" style="transform-origin:470px 64px"><path class="m dr" d="M470 64 V100" pathLength="1"/><rect class="c dr" x="420" y="28" width="98" height="36" pathLength="1"/><text class="fc" x="469" y="52" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" letter-spacing="1">SE RENTA</text></g><g class="walk"><g class="k none"><circle class="dr" cx="150" cy="222" r="3.6" pathLength="1"/><path class="dr" d="M150 226 V236.0 M145 248 L150 236.0 L155 248 M144 235.4 L150 232 L156 235.4" pathLength="1"/></g><rect class="k dr" x="156" y="228" width="18" height="20" rx="3" pathLength="1"/><path class="k dr" d="M162 228 v-4 h6 v4" pathLength="1"/></g><g class="shake" style="transform-origin:372px 250px"><g class="m none"><circle class="dr" cx="372" cy="222" r="3.6" pathLength="1"/><path class="dr" d="M372 226 V236.0 M367 248 L372 236.0 L377 248 M366 235.4 L372 232 L378 235.4" pathLength="1"/></g><path class="m dr" d="M378 226 l6 -6" pathLength="1"/></g></svg></div>
+      <div class="ctx3">
+        <article><h3><small>Urbano</small>Corredores, no puntos</h3><p>La noche se ordena en ejes: Álvaro Obregón y Monterrey en Roma Norte; Tamaulipas, Michoacán y el anillo de Ámsterdam en Condesa. Por eso el mapa importa tanto como la cifra.</p></article>
+        <article><h3><small>Cultural</small>Del mezcal al reggaetón</h3><p>Conviven mezcalerías, coctelería de listas internacionales, cantinas, salsa en vivo, clubes de electrónica y antros de reggaetón. Cada tipo de lugar tiene su propia curva de la noche.</p></article>
+        <article><h3><small>Social</small>Fiesta y vivienda</h3><p>La misma actividad que llena bares sube rentas, genera ruido y desplaza vecinos. Visualizar la noche también es tomar postura sobre a quién le sirve la ciudad.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3 DATOS: MAPA ===== -->
+  <section class="sec" aria-labelledby="s3">
+    <div class="lab"><span class="n">01.3</span><h2 id="s3">Ubicación</h2></div>
+    <div class="body">
+      <p class="h">¿Dónde está la fiesta en este momento?</p>
+      <p class="p">Cada punto es un bar o antro. Su brillo indica qué tan lleno está a la hora elegida. Mueve la hora o presiona «Ver la noche» para recorrerla.</p>
+    </div>
+    <figure class="fig full" style="margin-top:24px">
+      <div class="fig-head">
+        <p class="legend"><span><i style="background:var(--roma)"></i>Roma Norte</span><span><i style="background:var(--cond)"></i>Condesa (incluye Hipódromo e Hipódromo Condesa)</span><span><i style="background:var(--ink-2);box-shadow:0 0 0 3px rgba(244,241,248,.15)"></i>Más brillo = más afluencia</span></p>
+      </div>
+      <div class="mapf" id="mapf"><svg id="map" role="img" aria-label="Mapa de Roma Norte y Condesa con bares y antros; el brillo de cada punto indica su afluencia a la hora elegida"></svg><div class="tip" id="tip"></div></div>
+      <div class="rail">
+        <button class="btn" id="play" aria-pressed="false"><span class="ic" aria-hidden="true"></span><span class="lbl">Ver la noche</span></button>
+        <div class="hours" id="hours" role="group" aria-label="Hora"></div>
+      </div>
+      <figcaption class="cap">Calles, bares y antros: OpenStreetMap · Límites de colonia: SEPOMEX · Ubicación, horario y horarios de mayor concurrencia: Google Maps (consultado el 24 oct 2026) · <span id="nVen"></span></figcaption>
+    </figure>
+  </section>
+
+  <!-- ===== 4 DATOS: DOS LUGARES ===== -->
+  <section class="sec" aria-labelledby="s4">
+    <div class="lab"><span class="n">01.4</span><h2 id="s4">Afluencia actual</h2></div>
+    <div class="body">
+      <p class="h">Un lugar por zona: qué tan lleno está frente a lo habitual.</p>
+      <p class="p">La afluencia es un índice de 0 a 100, donde 100 es la hora más concurrida del lugar en la semana. La variación compara el viernes con su promedio de jueves a sábado a esa misma hora (Google Maps).</p>
+    </div>
+    <div class="places full" id="places"></div>
+  </section>
+
+  <!-- ===== 5 DATOS: ZONAS POR HORA ===== -->
+  <section class="sec" aria-labelledby="s5">
+    <div class="lab"><span class="n">01.5</span><h2 id="s5">Actividad de la zona</h2></div>
+    <figure class="fig body" style="margin-top:0">
+      <div class="fig-head">
+        <div><p class="kicker">Índice promedio de concurrencia (Google), por hora</p><h3 id="zTitle"></h3></div>
+        <div class="seg" role="group" aria-label="Noche" id="days"></div>
+      </div>
+      <p class="legend"><span><i style="background:var(--roma)"></i>Roma Norte</span><span><i style="background:var(--cond)"></i>Condesa</span></p>
+      <svg id="zchart" role="img" aria-labelledby="zTitle"></svg>
+      <figcaption class="cap" id="zCap"></figcaption>
+    </figure>
+  </section>
+
+  <!-- ===== 6 DATOS: DENSIDAD ===== -->
+  <section class="sec" aria-labelledby="s6">
+    <div class="lab"><span class="n">01.6</span><h2 id="s6">Concentración</h2></div>
+    <div class="body">
+      <p class="h" id="dTitle"></p>
+      <div class="dens" id="dens"></div>
+      <div class="dens-k"><span><i></i>Bar</span><span><i class="p"></i>Pub</span><span><i class="n"></i>Antro o club</span><span>Un punto = un establecimiento</span></div>
+      <p class="cap">Establecimientos registrados en OpenStreetMap más la lista curada del proyecto ÷ superficie de cada zona según los polígonos de SEPOMEX. El DENUE de INEGI permitiría verificar y completar el conteo.</p>
+    </div>
+  </section>
+
+  <!-- ===== 7 TABLA ===== -->
+  <section class="sec" aria-labelledby="s7">
+    <div class="lab"><span class="n">01.7</span><h2 id="s7">Los datos</h2></div>
+    <div class="body tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Dato</th><th>Qué mide</th><th>Unidad</th><th>Fuente</th></tr></thead>
+        <tbody>
+          <tr><td>Afluencia actual</td><td>Qué tan concurrido está un establecimiento en comparación con su actividad habitual.</td><td>Índice de 0 a 100</td><td>Google Maps · afluencia en vivo</td></tr>
+          <tr><td>Afluencia habitual</td><td>Qué tan concurrido suele estar a cada hora y día.</td><td>Índice de 0 a 100 por hora</td><td>Google Maps · horarios populares</td></tr>
+          <tr><td>Actividad de la zona</td><td>Qué tan activa se encuentra Roma Norte o Condesa en un momento dado.</td><td>Porcentaje (%) por hora</td><td>Promedio de los lugares de cada zona</td></tr>
+          <tr><td>Ubicación de bares y antros</td><td>Dónde se concentran geográficamente los establecimientos.</td><td>Establecimientos / km²</td><td>OpenStreetMap · DENUE (INEGI) · SEPOMEX</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" aria-label="Pregunta de investigación">
+    <div class="lab"><span class="n">01.8</span><h2>Pregunta de investigación</h2></div>
+    <p class="rq">¿Cómo puede el diseño de experiencia representar la afluencia y actividad nocturna de Roma Norte y Condesa para visualizar <b>cómo cambia la intensidad de la fiesta</b> conforme avanza la noche?</p>
+  </section>
+
+  <section class="next" aria-label="Siguiente pantalla">
+    <div class="mph-wrap"><svg class="ill mph" viewBox="0 0 300 200" role="img" aria-label="Ilustración: metrónomo con audífonos" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="d dr" stroke-width="2" d="M60 128 A90 90 0 0 1 240 128" pathLength="1"/><rect class="r dr" x="44" y="118" width="22" height="46" rx="8" pathLength="1"/><rect class="r dr" x="234" y="118" width="22" height="46" rx="8" pathLength="1"/><path class="k dr" d="M112 186 L132 44 H168 L188 186 Z M104 186 H196 V194 H104 Z" pathLength="1"/><path class="m dr" stroke-dasharray="2 4" d="M140 64 h20 M138 80 h24 M136 96 h28 M134 112 h32 M132 128 h36" pathLength="1"/><g class="swing" style="transform-origin:150px 170px"><path class="c dr" stroke-width="2.4" d="M150 170 L150 54" pathLength="1"/><rect class="fc" x="143" y="92" width="14" height="9" rx="2"/></g><circle class="k dr" cx="150" cy="170" r="4" pathLength="1"/><path class="c wv dr" style="animation-delay:0.00s" d="M30 127 a14 14 0 0 0 0 28" pathLength="1"/><path class="c wv dr" style="animation-delay:0.22s" d="M30 115 a26 26 0 0 0 0 52" pathLength="1"/><path class="r wv dr" style="animation-delay:0.40s" d="M270 127 a14 14 0 0 1 0 28" pathLength="1"/><path class="r wv dr" style="animation-delay:0.62s" d="M270 115 a26 26 0 0 1 0 52" pathLength="1"/></svg></div>
+    <p class="a">Ya viste los datos.</p>
+    <p>Ahora siente su ritmo.</p>
+    <div class="zbtns">
+      <a class="zbtn" style="--zc:var(--roma)" href="explorar.html#roma" data-zone="roma"><i></i>02 · Roma Norte</a>
+      <a class="zbtn" style="--zc:var(--cond)" href="explorar.html#condesa" data-zone="condesa"><i></i>02 · Condesa</a>
+    </div>
+  </section>
+
+  <footer class="foot">
+    Fuentes de contexto: <a href="https://en.wikipedia.org/wiki/History_of_Colonia_Roma" target="_blank" rel="noopener">History of Colonia Roma (Wikipedia)</a> · <a href="https://en.wikipedia.org/wiki/Amsterdam_Avenue_(Mexico_City)" target="_blank" rel="noopener">Amsterdam Avenue (Wikipedia)</a> · <a href="https://www.razon.com.mx/ciudad/2025/07/07/que-es-la-gentrificacion-y-por-que-protestaron-en-su-contra-en-la-ciudad-de-mexico/" target="_blank" rel="noopener">La Razón · marcha contra la gentrificación, 2025</a> · <a href="https://support.google.com/business/answer/6263531?hl=es" target="_blank" rel="noopener">Google · horarios populares</a><br>
+    Pulso Nocturno · Taller de visualización de datos e información · Calles y lugares © colaboradores de OpenStreetMap · Límites de colonia: SEPOMEX
+  </footer>
+</main>
+<script>
+/* una sola pantalla: mapa a la izquierda, lectura a la derecha */
+(() => {
+  const $ = s => document.querySelector(s), mk = c => { const d = document.createElement('div'); d.className = c; return d; };
+  const main = $('main'), one = mk('one'), L = mk('one-map'), Rr = mk('one-info');
+  one.append(L, Rr);
+  const cover = $('.cover');
+  Rr.append(cover.querySelector('.byline'), cover.querySelector('.title'), cover.querySelector('.question'));
+  const ck = mk('one-clock'); [...cover.querySelector('.cover-r').children].forEach(c => ck.append(c)); Rr.append(ck);
+  const lede = document.createElement('p'); lede.className = 'one-lede';
+  lede.textContent = 'Cada punto es un bar o antro y su brillo indica qué tan lleno está. Recorre la noche hora por hora y compara cuándo se enciende cada zona.';
+  Rr.append(lede);
+  Rr.append($('#zchart').closest('figure'));
+  Rr.append($('.zbtns'));
+  L.append($('#mapf').closest('figure'));
+  const off = mk('offstage'); off.setAttribute('aria-hidden', 'true'); off.inert = true;
+  [...main.children].forEach(c => off.append(c));
+  main.append(one, off);
+  document.body.classList.add('is-one');
+})();
+</script>
+
+<script>
+/* ===== fondo nocturno en movimiento: luces de neón que derivan y estrellas que titilan ===== */
+(() => {
+  const RM = matchMedia('(prefers-reduced-motion: reduce)');
+  const cv = document.createElement('canvas'); cv.id = 'bgfx'; cv.setAttribute('aria-hidden', 'true');
+  document.body.prepend(cv);
+  const cx = cv.getContext('2d'); let W = 0, H = 0, dpr = 1;
+  const root = document.documentElement;
+  const rgb = v => { const s = getComputedStyle(root).getPropertyValue(v).trim(); if (/^\d/.test(s)) return s.split(',').map(Number); const m = s.match(/#([0-9a-f]{6})/i); return m ? [0, 2, 4].map(i => parseInt(m[1].slice(i, i + 2), 16)) : null; };
+  function cols() {
+    const acc = rgb('--acc-rgb'), roma = rgb('--roma') || [157, 112, 250], cond = rgb('--cond') || [247, 70, 138];
+    return acc ? [acc, rgb('--acc2-rgb') || acc, acc] : [roma, cond, [92, 60, 190]];
+  }
+  let C = cols();
+  new MutationObserver(() => { C = cols(); }).observe(root, { attributes: true, attributeFilter: ['data-zone'] });
+  const blobs = [
+    { x: .8, y: .25, r: .95, sx: .00007, sy: .00005, ph: 0, a: .038, c: 0 },
+    { x: .2, y: .75, r: .95, sx: .00005, sy: .00008, ph: 2, a: .034, c: 1 },
+    { x: .5, y: .5, r: 1.1, sx: .00004, sy: .00004, ph: 4, a: .028, c: 2 },
+  ];
+  let stars = [];
+  function size() {
+    dpr = Math.min(1.5, devicePixelRatio || 1); W = innerWidth; H = innerHeight;
+    cv.width = Math.round(W * dpr * .6); cv.height = Math.round(H * dpr * .6);
+    stars = Array.from({ length: Math.round(W * H / 16000) }, () => ({ x: Math.random(), y: Math.random(), s: Math.random() * 1.1 + .3, p: Math.random() * 6.28, v: .4 + Math.random() * 1.4 }));
+  }
+  size(); addEventListener('resize', size);
+  let last = 0;
+  function draw(t) {
+    requestAnimationFrame(draw);
+    if (t - last < 40) return; last = t;
+    const w = cv.width, h = cv.height, sc = w / W;
+    cx.clearRect(0, 0, w, h);
+    const scroll = scrollY / Math.max(1, document.documentElement.scrollHeight - H);
+    const beat = parseFloat(getComputedStyle(root).getPropertyValue('--beat')) || 0;
+    cx.globalCompositeOperation = 'lighter';
+    for (const b of blobs) {
+      const x = (b.x + Math.sin(t * b.sx + b.ph) * .1) * w, y = (b.y + Math.cos(t * b.sy + b.ph) * .08) * h;
+      const r = b.r * Math.max(w, h) * (1 + beat * .08), c = C[b.c];
+      const g = cx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},${b.a * (1 + beat * .25)})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+      cx.fillStyle = g; cx.fillRect(0, 0, w, h);
+    }
+    cx.globalCompositeOperation = 'source-over';
+    for (const s of stars) {
+      const a = .08 + (Math.sin(t * .001 * s.v + s.p) * .5 + .5) * .32;
+      cx.fillStyle = `rgba(244,241,248,${a.toFixed(3)})`;
+      const y = ((s.y - scroll * .08 * s.s) % 1 + 1) % 1;
+      cx.fillRect(s.x * w, y * h, s.s * sc * 1.2, s.s * sc * 1.2);
+    }
+  }
+  if (!RM.matches) requestAnimationFrame(draw); else { cv.style.display = 'none'; }
+})();
+
+/* ===== aparición de secciones al hacer scroll ===== */
+(() => {
+  const RM = matchMedia('(prefers-reduced-motion: reduce)');
+  const sel = ['main section > *', 'main .body > *', 'main .wide > *', 'main figure', '.place', '.dz', '.ctx3 article', '.ctxill > *', '.two > div', '.tbl tr', '.triad > *', '.abd > *', '.scen > *', '.eth > *', '.proc > li', '.codes > *', '.grid3 > *', '.facts > *', '.read > div', '.metrics > *', '.next > *', '.close > *', '.hero > *', '.stage > *', '.panel', '.night', '.ex-l > *', '.cover-r > *', 'footer'];
+  const seen = new Set();
+  const skip = el => el.closest('.mph-wrap') || el.closest('.title') || el.closest('.ill') || el.matches('script,style,svg *') || el.closest('.topbar');
+  document.querySelectorAll(sel.join(',')).forEach(el => {
+    if (seen.has(el) || skip(el)) return;
+    // si un ancestro ya se anima, no animar de nuevo (evita doble desplazamiento)
+    for (let p = el.parentElement; p; p = p.parentElement) if (seen.has(p)) { if (p.children.length > 1 && p.matches('.triad,.abd,.scen,.eth,.proc,.codes,.facts,.read,.ctx3,.ctxill,.places,.dens,.metrics,.grid3,.two')) break; return; }
+    seen.add(el);
+    el.classList.add('rv');
+    const sib = [...el.parentElement.children].filter(x => !x.matches('script,style'));
+    el.style.setProperty('--rd', Math.min(6, sib.indexOf(el)));
+    if (el.matches('.lab')) el.classList.add('rv-l');
+  });
+  const ills = [...document.querySelectorAll('.ill')];
+  if (RM.matches || !('IntersectionObserver' in window)) { document.querySelectorAll('.rv').forEach(e => e.classList.add('in')); ills.forEach(e => e.classList.add('in', 'on')); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const t = e.target; t.classList.add('in'); io.unobserve(t);
+    if (t.classList.contains('ill')) setTimeout(() => t.classList.add('on'), 1900);
+    t.querySelectorAll('[data-count]').forEach(countUp);
+    if (t.matches('[data-count]')) countUp(t);
+  }), { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+  document.querySelectorAll('.rv').forEach(e => io.observe(e));
+  ills.forEach(e => io.observe(e));
+  function countUp(n) {
+    if (n.dataset.counted) return; n.dataset.counted = 1;
+    const txt = n.textContent, m = txt.match(/-?\d+([.,]\d+)?/); if (!m) return;
+    const to = parseFloat(m[0].replace(',', '.')), dec = (m[1] || '').length - (m[1] ? 1 : 0), t0 = performance.now();
+    const st = t => { const k = Math.min(1, (t - t0) / 1100), e = 1 - Math.pow(1 - k, 3); n.textContent = txt.replace(m[0], (to * e).toFixed(dec)); if (k < 1) requestAnimationFrame(st); else n.textContent = txt; };
+    requestAnimationFrame(st);
+  }
+  // por si la página carga ya desplazada o la sección es más alta que la ventana
+  addEventListener('load', () => setTimeout(() => document.querySelectorAll('.rv:not(.in)').forEach(e => { const r = e.getBoundingClientRect(); if (r.top < innerHeight && r.bottom > 0) e.classList.add('in'); }), 300));
+})();
+</script>
+
+
+<script>
+window.PN_DATA = {"meta":{"fuente":"Google Maps — Horarios populares y afluencia en vivo","simulado":true,"captura":{"dia":"vie","fecha":"VIE 16 OCT","hora":3},"horas":["20:00","21:00","22:00","23:00","00:00","01:00","02:00","03:00","04:00"],"escala":"100 % = la hora más concurrida de cada lugar en la semana"},"map":{"w":1050,"h":880,"streets":{"P":"M991.6 -38 L987.8 11M652.1 40 L638.9 45 L617.2 49M472.9 83 L473.8 91M518.1 266 L547.4 260M622.8 301 L624.7 313M729.4 777 L698.3 908M491.7 279 L499.3 270M491.7 279 L507.8 275M910.5 328 L942.6 322M821.8 -3 L757.7 12M829.4 317 L853 312M355 115 L473.8 87M760.5 17 L823.7 1M521 710 L523.8 715 L526.6 729M722.8 735 L724.7 744M725.6 746 L729.4 764 L729.4 777M944.5 601 L896.4 602 L781.3 610M965.2 318 L969.9 318M968 288 L971.8 288M573.8 879 L639.8 918M226.7 623 L39 558M140.9 266 L78.6 278 L-15.7 317 L-79.8 353M547.4 814 L561.5 867M524.8 709 L531.4 728 L547.4 800M552.1 817 L564.4 864M564.4 864 L571 872 L581.3 880 L639.8 913M786 724 L782.2 715M189.9 174 L177.7 199M798.3 760 L786.9 727M663.4 44 L692.6 41 L727.5 24 L760.5 17M440.8 704 L446.5 705M544.6 803 L547.4 813M548.3 802 L551.2 812M446.5 705 L482.3 706 L500.2 702M445.5 701 L481.4 701 L501.2 698M757.7 12 L722.8 20 L688.9 25 L652.1 40M907.7 -19 L991.6 -38M482.3 289 L491.7 279M691.7 345 L698.3 349M562.5 265 L573.8 271 L577.6 271M622.8 301 L627.6 303M563.4 262 L577.6 271M479.5 292 L482.3 289M577.6 271 L610.6 292M99.4 426 L92.8 438M425.7 368 L435.2 361 L445.5 348M39 564 L217.3 627M226.7 623 L220.1 608M942.6 679 L949.2 601M781.3 610 L642.6 618M445.5 348 L479.5 292M976.5 169 L975.6 180M975.6 180 L973.7 201M-77 355 L-8.1 317 L48.5 293 L78.6 282M313.5 660 L399.3 690M428.6 700 L440.8 704M656.8 202 L654.9 194M659.6 213 L656.8 202M628.5 329 L650.2 420M617.2 297 L622.8 301M658.7 323 L674.7 333M529.5 623 L524.8 623M524.8 623 L427.6 626M501.2 698 L506.8 698M506.8 698 L518.1 702 L524.8 709M500.2 702 L504.9 702M504.9 702 L515.3 705 L521 710M992.6 11 L997.3 -37M987.8 11 L984.1 68M984.1 68 L980.3 112M987.8 68 L992.6 11M980.3 112 L977.5 162M985 112 L987.8 68M973.7 201 L971.8 225M981.2 162 L985 112M976.5 226 L978.4 200M971.8 225 L969.9 258M969.9 258 L968 288M974.6 258 L976.5 226M968 288 L965.2 318M971.8 288 L986 289M965.2 318 L962.4 356M969.9 318 L971.8 288M962.4 356 L959.5 391M967.1 356 L969.9 318M964.3 386 L967.1 356M959.5 391 L956.7 427M953.9 460 L944.5 601M961.4 427 L964.3 386M949.2 601 L960.5 437M949.2 601 L944.5 601M944.5 601 L941.6 633M928.4 882 L928.4 879M936.9 692 L933.1 758M1117 591 L1062.3 595M427.6 626 L421.9 626M323.9 628 L291.8 629M451.2 26 L457.8 40M877.5 -16 L829.4 -4M518.1 266 L526.6 271M284.2 302 L351.2 337M291.8 629 L257.8 634M30.5 556 L23 555 L-23.2 557M-64.7 561 L20.2 558M20.2 558 L30.5 559M187.1 259 L203.1 259M78.6 282 L87.1 279 L140.9 269M140.9 269 L187.1 259M189.9 253 L173.9 256M159.8 260 L140.9 266M749.2 886 L759.6 778M941.6 690 L941.6 680M937.8 680 L936.9 690M691.7 345 L666.2 243M704.9 657 L721.9 732M1062.3 595 L963.3 602 L949.2 601M790.7 768 L794.5 767 L798.3 760M146.5 881 L151.3 862M92.8 438 L81.5 459M30.5 559 L28.7 587 L29.6 591M74.9 471 L60.7 497M35.3 543 L30.5 556M135.2 456 L129.6 438M618.1 54 L663.4 44M580.4 -22 L570 -43M584.2 -23 L573.8 -45M616.2 46 L613.4 44 L609.6 37M616.2 46 L613.4 36M654.9 194 L633.2 112M618.1 54 L617.2 49M617.2 49 L616.2 46M619.1 57 L618.1 54M457.8 40 L466.3 57M551.2 813 L552.1 817M532.3 68 L521 72M617.2 49 L569.1 59M473.8 91 L474.8 96M471.9 69 L472.9 80M173.9 256 L159.8 260M20.2 710 L17.3 758M126.7 421 L125.8 396M39 558 L34.3 557M34.3 557 L33.4 561M41.9 533 L35.3 543M38.1 544 L34.3 557M55.1 507 L41.9 533M60.7 497 L55.1 507M229.5 631 L226.7 623M195.6 731 L210.7 687M217.3 627 L229.5 631M229.5 631 L285.2 650M33.4 561 L31.5 587 L29.6 591M29.6 591 L27.7 608M33.4 561 L39 564M285.2 650 L313.5 660M13.6 804 L12.6 817M933.1 816 L936.9 763M928.4 815 L923.7 875M929.4 875 L933.1 816M923.7 875 L923.7 879M923.7 879 L918 954M928.4 879 L929.4 875M34.3 557 L30.5 556M759.6 773 L778.5 771 L790.7 768M410.6 368 L425.7 368M472.9 80 L472.9 83M479.5 119 L491.7 174M498.3 201 L504 226M493.6 181 L498.3 201M439.9 699 L445.5 701M420.1 626 L389.9 627M125.8 396 L133.3 382M356.9 628 L340.8 628M372.9 627 L356.9 628M389.9 627 L372.9 627M474.8 96 L479.5 119M504 226 L509.7 253M670 505 L681.3 556M681.3 556 L696.4 625 L704.9 657M765.3 644 L737 526M781.3 712 L765.3 644M642.6 618 L529.5 623M737 526 L707.7 409M650.2 420 L670 505M699.2 372 L694.5 353M707.7 409 L699.2 372M708.7 355 L720 361M561.5 867 L567.2 874 L573.8 879M936.9 763 L937.8 757M938.8 735 L941.6 692M955.8 438 L953.9 460M956.7 427 L955.8 438M832.2 -1 L907.7 -19M823.7 1 L832.2 -1M978.4 200 L981.2 162M928.4 802 L928.4 815M933.1 758 L932.2 764M932.2 764 L928.4 802M941.6 633 L941.6 643M941.6 643 L937.8 679M960.5 437 L961.4 427M763.4 330 L775.6 328M700.2 343 L726.6 338M890.7 304 L903.9 301M903.9 301 L937.8 294M826.6 317 L829.4 317M785.1 326 L812.4 320M971.8 288 L974.6 258M365.4 345 L410.6 368M351.2 337 L365.4 345M277.6 298 L284.2 302M203.1 259 L277.6 298M509.7 253 L510.6 256M9.8 849 L8.8 864M472.9 83 L379.5 105M521 72 L472.9 83M627.6 303 L658.7 323M624.7 313 L628.5 329M12.6 819 L11.7 827M526.6 271 L547.4 267M399.3 690 L428.6 700M569.1 65 L618.1 54M30.5 556 L30.5 559M686 341 L691.7 345M691.7 345 L700.2 343M1067.1 295 L1081.2 296M1021.8 292 L1067.1 295M1005.8 290 L1021.8 292M996.3 290 L1005.8 290M986 289 L996.3 290M950.1 292 L968 288M937.8 294 L950.1 292M866.2 309 L890.7 304M853 312 L866.2 309M812.4 320 L826.6 317M739.8 335 L763.4 330M775.6 328 L785.1 326M726.6 338 L739.8 335M674.7 333 L686 341M610.6 292 L617.2 297M558.7 260 L563.4 262M547.4 260 L558.7 260M499.3 270 L518.1 266M510.6 256 L518.1 266M694.5 353 L691.7 345M956.7 319 L965.2 318M513.4 274 L526.6 271M507.8 275 L513.4 274M547.4 267 L562.5 265M698.3 349 L708.7 355M720 361 L728.5 366M728.5 366 L746.4 362M746.4 362 L779.4 355M779.4 355 L791.7 353M791.7 353 L822.8 346M822.8 346 L833.2 344M833.2 344 L836 344M836 344 L860.5 339M860.5 339 L872.8 336M872.8 336 L896.4 331M896.4 331 L910.5 328M942.6 322 L956.7 319M969.9 318 L1006.7 320M1006.7 320 L1018 321M1018 321 L1055.7 324M1055.7 324 L1072.7 325M1072.7 325 L1102 328M351.2 116 L355 115M-23.2 557 L-67.5 558M473.8 87 L521 76M521 76 L569.1 65M526.6 729 L543.6 801M379.5 105 L352.2 112M352.2 112 L348.4 112M829.4 -4 L821.8 -3M977.5 162 L976.5 169M491.7 174 L493.6 181M759.6 778 L759.6 773M633.2 112 L632.3 108M632.3 108 L619.1 57M160.7 835 L163.5 827M190.9 553 L187.1 547M170.1 519 L162.6 506M187.1 547 L178.6 533M162.6 506 L149.4 482M421.9 -12 L427.6 -8 L434.2 -9 L436.1 -11M428.6 -27 L421.9 -24 L420.1 -21 L420.1 -15M420.1 -15 L421.9 -12M438.9 -20 L437 -23M423.8 -30 L422.9 -25M423.8 -30 L428.6 -27M430.4 -8 L436.1 -5M436.1 -11 L436.1 -5M436.1 -5 L437 -2M666.2 243 L664.3 235M664.3 235 L659.6 213M257.8 634 L226.7 623M30.5 559 L33.4 561M937.8 757 L938.8 735M569.1 59 L532.3 68M422.9 -33 L423.8 -30M941.6 -31 L905.8 -23M905.8 -23 L877.5 -16M437 -23 L436.1 -25 L428.6 -27M436.1 -11 L438.9 -20M340.8 628 L323.9 628M782.2 715 L781.3 712M786.9 727 L786 724M721.9 732 L722.8 735M11.7 827 L10.7 834M609.6 37 L601.1 19M613.4 36 L604 18M604 18 L598.3 6M601.1 19 L595.5 8M595.5 8 L587 -9M587 -9 L580.4 -22M598.3 6 L589.8 -11M589.8 -11 L584.2 -23M441.8 6 L446.5 17M437 -2 L441.8 6M446.5 17 L451.2 26M466.3 57 L471.9 69M207.9 585 L198.4 567M16.4 772 L13.6 804M104.1 418 L99.4 426M81.5 459 L74.9 471M41.9 533 L41.9 538 L38.1 544M27.7 608 L25.8 631M25.8 631 L24.9 646M24.9 646 L21.1 694M21.1 694 L20.2 710M17.3 758 L16.4 772M10.7 834 L9.8 849M8.8 864 L4.1 904M151.3 862 L156 848M156 848 L160.7 836M163.5 826 L191.8 743M191.8 743 L195.6 731M215.4 673 L224.8 646M210.7 687 L215.4 673M224.8 646 L229.5 631M213.5 595 L207.9 585M220.1 608 L213.5 595M198.4 567 L190.9 553M178.6 533 L170.1 519M139 464 L135.2 456M149.4 482 L139 464M129.6 438 L126.7 421","S":"M488 882 L476.7 829M801.1 207 L747.3 219 L678.5 232M582.3 154 L491.7 174M606.8 143 L633.2 112M323.9 213 L318.2 221M563.4 262 L571 262 L639.8 248M713.4 10 L717.2 1M269.2 37 L248.4 34M152.2 23 L233.3 35M678.5 29 L616.2 46M476.7 830 L538.9 816M212.6 437 L284.2 302M274.8 536 L398.4 602M560.6 256 L558.7 254 L549.3 211M254.1 155 L253.1 145 L242.8 128 L240.9 115M355 115 L352.2 112M309.7 52 L298.4 35M298.4 35 L290.9 20M434.2 831 L317.3 869 L305.9 869 L252.2 839 L232.4 831 L219.2 829 L163.5 826M686 80 L680.4 101M273.9 531 L135.2 456M91.8 452 L100.3 446 L106 447M729.4 777 L759.6 773M9.8 606 L15.5 604 L27.7 608M479.5 292 L495.5 317 L513.4 340M389.9 169 L371 145M394.6 861 L405 863M471.9 830 L484.2 881M39 564 L39 558M92.8 438 L84.3 435M84.3 435 L75.8 459M273.9 -12 L268.2 -23M423.8 297 L419.1 307 L413.5 333 L415.3 347 L425.7 368M408.7 858 L410.6 856 L453.1 839 L457.8 840M425.7 368 L427.6 378 L408.7 428M398.4 602 L415.3 617 L420.1 626M426.7 626 L421.9 611 L419.1 607M7 826 L13.6 826 L18.3 829M18.3 829 L40 854 L77.7 903M-27 830 L5.1 830 L10.7 834M585.1 800 L602.1 797M585.1 800 L623.8 784 L630.4 784M539.8 -75 L442.7 -27 L437 -23M799.2 773 L798.3 760M69.2 886 L20.2 827M462.5 824 L459.7 835M212.6 27 L186.2 23M99.4 440 L125.8 396M30.5 559 L-13.8 643M280.5 869 L281.4 876 L278.6 881 L240.9 890M21.1 826 L57.9 829M-3.4 825 L7 826M-40.2 828 L-9.1 827 L-3.4 825M469.1 801 L467.2 809M469.1 819 L471.9 810M467.2 809 L463.4 822M471.9 810 L469.1 801M469.1 801 L460.6 764M467.2 809 L469.1 819M446.5 705 L445.5 701M440.8 704 L451.2 745M790.7 2 L753.9 11M1088.8 241 L1077.4 323M675.7 57 L624.7 117M586.1 163 L548.3 207M254.1 155 L258.8 147 L269.2 146 L273.9 144 L281.4 137 L285.2 136M471.9 275 L446.5 240M389.9 169 L407.8 194M510.6 256 L587.9 165M356.9 118 L384.2 112M-33.6 688 L9.8 606M439.9 699 L440.8 704M230.5 142 L230.5 169 L227.7 180M228.6 59 L228.6 79M339 96 L333.3 89M496.5 270 L491.7 273 L471.9 275M611.5 156 L610.6 147 L601.1 139 L589.8 140 L584.2 146 L582.3 151 L582.3 156 L586.1 163 L590.8 167 L594.5 168 L603 167 L608.7 163 L611.5 156M457.8 840 L452.1 856M163.5 826 L64.5 819 L12.6 817M725.6 27 L757.7 19M516.3 337 L499.3 316 L482.3 289M594.5 395 L600.2 393M725.6 -20 L731.3 -34M571.9 468 L565.3 491M409.7 435 L411.6 430M633.2 285 L640.8 261M804.9 214 L969 179 L975.6 180M646.4 239 L641.7 240M12.6 -6 L-82.6 -21M639.8 248 L644.5 246M108.8 406 L104.1 418M714.3 -4 L708.7 8M690.7 80 L693.6 69M669.1 143 L659.6 177M660.6 189 L670 155M651.1 207 L645.5 228M641.7 240 L564.4 257 L560.6 256M641.7 240 L639.8 248M622.8 301 L621 309M621 309 L610.6 343M632.3 273 L628.5 283M600.2 393 L619.1 331M594.5 395 L576.6 453M576.6 469 L595.5 408M558.7 512 L553 531M564.4 510 L571.9 485M547.4 548 L540.8 572M529.5 623 L540.8 585M524.8 623 L505.9 684M501.2 698 L500.2 702M506.8 698 L523.8 640M504.9 702 L506.8 698M500.2 702 L493.6 723M488.9 737 L487 744M487 744 L474.8 784M494.6 736 L500.2 716M471.9 810 L489.9 753M447.4 872 L431.4 925M452.1 874 L462.5 842M447.4 890 L448.4 886M975.6 761 L983.1 757M408.7 428 L405 435M405 435 L389.9 475M411.6 430 L432.3 382M390.8 479 L403.1 531M394.6 477 L409.7 435M404 534 L409.7 567M403.1 531 L404 534M406.9 536 L394.6 477M409.7 567 L410.6 576M410.6 576 L412.5 579 L416.3 601 L415.3 608 L421.9 626M412.5 563 L406.9 536M416.3 575 L412.5 563M421.9 626 L436.1 686M427.6 626 L416.3 575M436.1 686 L439.9 699M439.9 677 L430.4 638M451.2 745 L454 756M454 756 L455.9 765M455 744 L446.5 705M455.9 765 L467.2 809M460.6 764 L455 744M484.2 881 L485.1 886M485.1 886 L491.7 915M353.1 119 L351.2 116M468.2 276 L479.5 292M695.5 62 L697.3 55M318.2 221 L181.4 481M326.7 224 L329.5 220M356.9 118 L355 115M795.4 10 L815.2 5 L823.7 1M420.1 -15 L313.5 38 L305.9 40 L293.7 40M258.8 -9 L238 26M236.1 195 L243.7 181 L254.1 155M133.3 382 L139 380 L193.7 276M189.9 253 L108.8 406M106 447 L139 464M933.1 758 L821.8 765 L812.4 767 L808.6 766M597.4 781 L546.4 801 L473.8 818M711.5 751 L725.6 746M630.4 784 L650.2 776 L659.6 770 L711.5 751M624.7 117 L604 141M633.2 112 L662.5 78M551.2 813 L560.6 811 L565.3 808 L573.8 807 L602.1 797M725.6 746 L882.2 697 L911.4 692 L936.9 692M937.8 679 L897.3 678 L883.1 680 L803.9 705M414.4 604 L277.6 532M329.5 220 L405.9 201M384.2 112 L431.4 101M366.3 105 L350.3 109M242.8 40 L248.4 29M153.2 17 L12.6 -6M11.7 0 L104.1 15M-75.1 -14 L11.7 0M301.2 44 L318.2 40 L421.9 -12M282.4 39 L269.2 37M983.1 757 L1049.1 754M983.1 757 L974.6 755M808.6 766 L801.1 764 L798.3 760M729.4 777 L732.2 780 L737 781 L799.2 773 L864.3 767 L932.2 764M602.1 797 L715.3 779M715.3 779 L729.4 777M160.7 836 L219.2 839 L235.2 843 L245.6 847 L280.5 869M429.5 90 L395.5 98M238 26 L232.4 40M232.4 40 L228.6 59M292.7 895 L394.6 861M107.9 444 L99.4 440M240.9 109 L239.9 81M708.7 8 L706.8 10 L693.6 12 L689.8 14 L681.3 25 L680.4 31 L682.3 39 L686 45 L692.6 50 L693.6 53M697.3 55 L700.2 52 L706.8 51 L714.3 47 L719 43 L720.9 39 L721.9 29 L719 20 L713.4 13 L713.4 10M619.1 57 L681.3 43M521.9 69 L472.9 80M345.6 106 L339 96M290.9 20 L283.3 6M283.3 6 L273.9 -12M19.2 826 L13.6 819M14.5 828 L36.2 852 L40 854M-33.6 826 L-27 830M463.4 822 L434.2 831M1102 679 L1069.9 679M1069.9 679 L1056.7 680 L1045.4 683M234.3 31 L212.6 27M670 155 L673.8 142M673.8 142 L686 95M672.8 130 L669.1 143M275.8 -39 L267.3 -24M267.3 -24 L258.8 -9M789.8 710 L781.3 712M803.9 705 L789.8 710M781.3 712 L752 723 L721.9 732M416.3 199 L411.6 193M416.3 199 L583.2 159M412.5 200 L416.3 199M412.5 200 L441.8 241M411.6 193 L407.8 194M375.7 144 L356.9 118M407.8 194 L328.6 212M407.8 194 L412.5 200M405.9 201 L412.5 200M1049.1 754 L1090.6 752M56 520 L61.7 508M39 558 L40.9 551 L56 520M135.2 456 L107.9 444M59.8 491 L53.2 503M203.1 259 L236.1 195M32.4 610 L39 564M273.9 -16 L293.7 -47M248.4 29 L263.5 4M651.1 222 L656.8 202M-22.3 788 L-34.5 765M12.6 817 L5.1 817 L-6.2 812 L-22.3 788M57.9 829 L160.7 836M393.7 168 L375.7 144M403.1 182 L399.3 177M411.6 193 L403.1 182M446.5 240 L416.3 199M438.9 366 L445.5 348M284.2 302 L305.9 263 L320.1 234 L326.7 224M420.1 358 L410.6 368M430.4 638 L427.6 626M419.1 607 L414.4 604M430.4 638 L426.7 626M371 145 L353.1 119M618.1 772 L597.4 781M673.8 749 L657.7 754 L618.1 772M937.8 757 L933.1 758M974.6 755 L937.8 757M490.8 893 L488 882M645.5 228 L641.7 240M659.6 177 L654.9 194M662.5 78 L679.4 59M936.9 692 L941.6 692M941.6 692 L1100.1 692M660.6 236 L646.4 239M721.9 732 L673.8 749M976.5 169 L973.7 172 L954.8 176M678.5 232 L664.3 235M936.9 763 L975.6 761M932.2 764 L936.9 763M942.6 679 L937.8 679M509.7 253 L496.5 270M472.9 80 L443.6 87M569.1 69 L619.1 57M538.9 816 L547.4 814M624.7 313 L627.6 303M540.8 585 L548.3 560M347.4 109 L345.6 106M225.8 14 L216.3 -10M547.4 814 L551.2 813M405 863 L408.7 858M520 80 L569.1 69M720 -7 L725.6 -20M482.3 289 L471.9 275M399.3 177 L393.7 168M285.2 136 L310.7 130M310.7 130 L338 123M338 123 L353.1 119M441.8 241 L468.2 276M644.5 246 L666.2 243M654.9 194 L651.1 207M644.5 246 L646.4 239M725.6 -30 L720 -17M729.4 -39 L725.6 -30M720 -17 L714.3 -4M693.6 53 L691.7 61M689.8 68 L686 80M680.4 101 L674.7 121M674.7 121 L672.8 130M639.8 248 L632.3 273M628.5 283 L622.8 301M604.9 361 L599.3 380M610.6 343 L604.9 361M599.3 380 L594.5 394M594.5 394 L545.5 378M228.6 86 L229.5 109M239.9 54 L242.8 40M165.4 -130 L212.6 -8M691.7 61 L689.8 68M576.6 453 L571.9 468M565.3 491 L558.7 512M553 531 L547.4 548M536.1 586 L529.5 606M540.8 572 L536.1 586M529.5 606 L524.8 623M505.9 684 L501.2 698M493.6 723 L488.9 737M474.8 784 L469.1 801M452.1 856 L447.4 872M679.4 59 L687 49M684.1 46 L675.7 57M448.4 886 L452.1 874M465.3 833 L468.2 822M489.9 753 L494.6 736M500.2 716 L504.9 702M523.8 640 L529.5 623M548.3 560 L553 547M553 547 L559.6 524M559.6 524 L564.4 510M571.9 485 L576.6 469M595.5 408 L600.2 393M619.1 331 L624.7 313M627.6 303 L630.4 296M630.4 296 L633.2 285M640.8 261 L644.5 246M646.4 239 L651.1 222M656.8 202 L660.6 189M686 95 L690.7 80M693.6 69 L695.5 62M717.2 1 L720 -7M296.5 44 L301.2 44M239.9 81 L239 74M239 74 L239.9 54M263.5 4 L271 -11M271 -11 L273.9 -16M543.6 382 L589.8 397 L594.5 395M545.5 378 L516.3 337M513.4 340 L543.6 382M438.9 -20 L541.7 -72M99.4 440 L92.8 438M353.1 119 L356.9 118M327.6 80 L309.7 52M757.7 19 L795.4 10M954.8 176 L924.6 181 L840.7 199M840.7 199 L803.9 207M803.9 207 L801.1 207M664.3 235 L660.6 236M666.2 243 L803 214M549.3 211 L548.3 207M445.5 701 L439.9 677M548.3 207 L538.9 219M538.9 219 L509.7 253M471.9 275 L468.2 276M468.2 276 L451.2 280 L428.6 291M428.6 291 L423.8 297M389.9 475 L390.8 479M432.3 382 L438.9 366M53.2 503 L55.1 507M170.1 519 L172 513M721.9 29 L725.6 27M293.7 40 L282.4 39M104.1 15 L152.2 23M186.2 23 L153.2 17M616.2 46 L569.1 57M569.1 57 L533.2 65 L521.9 69M333.3 89 L327.6 80M350.3 109 L347.4 109M473.8 91 L520 80M431.4 101 L473.8 91M821.8 -3 L790.7 2M491.7 174 L411.6 193M328.6 212 L323.9 213M185.2 488 L188 484M210.7 442 L212.6 437M172 513 L185.2 488M139 464 L179.6 485M179.6 485 L185.2 488M185.2 488 L271 534M271 534 L274.8 536M181.4 481 L179.6 485M179.6 485 L169.2 504 L166.4 506 L162.6 506M277.6 532 L273.9 531M188 484 L210.7 442M228.6 79 L228.6 86M246.5 37 L296.5 44M233.3 35 L246.5 37M248.4 34 L234.3 31M229.5 112 L229.5 125M229.5 109 L229.5 112M240.9 115 L240.9 111M-13.8 643 L-36.4 687M459.7 835 L457.8 840M462.5 842 L465.3 833M468.2 822 L469.1 819M470 821 L471.9 830M474.8 820 L471.9 810M476.7 829 L474.8 820M681.3 27 L678.5 29M681.3 43 L684.1 42M11.7 825 L21.1 826M11.7 825 L14.5 828M499.3 270 L510.6 256M229.5 125 L230.5 142M61.7 508 L86.2 462M86.2 462 L99.4 440M227.7 180 L196.5 240M196.5 240 L189.9 253M71.1 470 L59.8 491M75.8 459 L71.1 470M193.7 276 L203.1 259M380.4 102 L366.3 105M352.2 112 L350.3 109M348.4 112 L347.4 109M216.3 -10 L192.8 -71M395.5 98 L380.4 102M443.6 87 L429.5 90","T":"M576.6 469 L571.9 468M771.9 395 L805.8 416 L808.6 423M808.6 423 L810.5 425 L818.1 424 L829.4 429 L836 430 L933.1 427M600.2 393 L728.5 366M956.7 427 L961.4 427M1120.8 300 L1077.4 322 L964.3 386M1004.8 13 L992.6 11M305.9 33 L302.2 32 L297.5 26M137.1 301 L122 341 L116.4 350M158.8 256 L148.4 273 L137.1 301M230.5 142 L215.4 146 L204.1 152 L202.2 155M252.2 840 L248.4 848M240.9 890 L240.9 877 L248.4 852 L247.5 849M255 831 L313.5 660M711.5 853 L665.3 843 L598.3 826 L561.5 819M541.7 804 L538.9 815M462.5 822 L195.6 731M1018 895 L1083.1 856M301.2 44 L322 47 L330.5 46M819 289 L820.9 291 L826.6 317M766.2 120 L770.9 138 L799.2 131 L800.2 130 L797.3 117M265.4 -29 L216.3 -10M561.5 819 L547.4 816M852 413 L836 344M561.5 867 L564.4 884M887.9 574 L891.6 581 L915.2 678M-77 836 L1.3 832 L8.8 833M92.8 438 L90.9 434 L91.8 427M202.2 442 L359.7 436M359.7 436 L355.9 433M770.9 868 L923.7 879M247.5 849 L238 876 L238 890M808.6 423 L809.6 419 L804.9 412 L776.6 394M757.7 22 L767.1 63M382.3 899 L405 863M405 863 L447.4 872M543.6 459 L466.3 436 L439.9 435M434.2 435 L409.7 435M409.7 435 L405 435M153.2 17 L152.2 23M157.9 -18 L153.2 17M13.6 -107 L42.8 -114 L73 -116 L91.8 -114 L109.8 -105 L130.5 -86 L145.6 -63 L152.2 -49 L157.9 -22M817.1 257 L814.3 254 L804.9 214M782.2 135 L784.1 136 L801.1 207M805.8 259 L809.6 272 L809.6 278 L813.4 289 L815.2 290M826.6 288 L828.4 286 L825.6 270 L826.6 269 L824.7 267 L821.8 256M853.9 430 L886 571 L887.9 574M736 -25 L750.2 5M452.1 874 L484.2 881M447.4 872 L452.1 874M992.6 11 L987.8 11M964.3 386 L959.5 391M923.7 879 L928.4 879M928.4 879 L1080.3 880M1112.3 81 L1076.5 60 L1061.4 49 L1028.4 29 L1011.4 16 L1004.8 13M1083.1 852 L996.3 905M1080.3 876 L929.4 875M405 435 L359.7 436M32.4 610 L128.6 642 L327.6 713M484.2 881 L488 882M488 882 L521 890M177.7 199 L176.7 206 L158.8 256M116.4 350 L88.1 424M297.5 26 L276.7 -14M276.7 -14 L307.8 -69M305.9 33 L293.7 40M269.2 146 L302.2 193 L326.7 224 L423.8 297M633.2 -134 L573.8 -104 L558.7 -107 L548.3 -107 L541.7 -105 L534.2 -100 L530.4 -95 L526.6 -81 L434.2 -35 L424.8 -34 L418.2 -31 L408.7 -22 L340.8 12 L305.9 33M355.9 433 L205 438M428.6 291 L425.7 288 L421.9 289 L403.1 276 L329.5 220 L276.7 150 L274.8 147 L274.8 143M202.2 155 L189.9 174M143.7 290 L148.4 278 L156.9 272 L160.7 264M91.8 427 L143.7 290M140.9 269 L142.8 278 L116.4 350M796.4 113 L792.6 94 L790.7 93 L762.4 100 L761.5 103 L766.2 120M538.9 816 L507.8 948M923.7 875 L770.9 864M410.6 368 L406.9 374 L313.5 482 L273.9 531 L242.8 564 L207.9 585M213.5 595 L217.3 590 L216.3 587 L219.2 584 L249.4 565 L345.6 451 L392.7 398 L412.5 373M157.9 -22 L157.9 -18M975.6 761 L1006.7 760M31.5 507 L55.1 507M1006.7 760 L1009.5 760M27.7 608 L32.4 610M267.3 -24 L240.9 -90M88.1 424 L84.3 435M1090.6 748 L974.6 755M1048.2 758 L1090.6 756M9.8 507 L31.5 507M327.6 713 L413.5 742M413.5 742 L454 756M929.4 875 L923.7 875M933.1 427 L956.7 427M776.6 394 L753.9 379 L750.2 381M758.7 387 L771.9 395M728.5 366 L728.5 368 L758.7 387M564.4 884 L569.1 901M849.2 414 L853.9 430M889.7 574 L855.8 430M777.5 97 L769 62M815.2 290 L826.6 288M821.8 256 L805.8 259M981.2 162 L977.5 162M797.3 117 L796.4 113M1045.4 758 L1048.2 758M1009.5 760 L1045.4 758M770.9 868 L766.2 865M766.2 865 L711.5 853M770.9 864 L766.2 865M829.4 317 L827.5 309M827.5 309 L823.7 291 L824.7 288M769 62 L760.5 25 L757.7 24M216.3 -10 L212.6 -8M252.2 839 L255 831M753.9 11 L757.7 19M836 344 L829.4 317M1077.4 323 L1080.3 326M767.1 63 L774.7 97M439.9 435 L434.2 435M571.9 468 L547.4 461M547.4 461 L543.6 459M437 -2 L442.7 -5 L449.3 -13 L536.1 -57 L551.2 -52 L564.4 -54M750.2 5 L753.9 11M-19.4 509 L9.8 507M855.8 430 L852 413M833.2 344 L849.2 414M826.6 317 L833.2 344M804.9 214 L803.9 207M803.9 207 L791.7 158 L787.9 136 L788.8 133M801.1 207 L803 214M803 214 L812.4 255 L811.5 258M1097.2 171 L981.2 162M731.3 -34 L736 -25M757.7 19 L757.7 22M393.7 15 L422.9 0 L434.2 0 L437 -2M195.6 731 L137.1 711 L115.4 706 L47.5 710 L20.2 710M20.2 710 L-39.3 711 L-42.1 709M543.6 801 L541.7 804M272 -31 L265.4 -29M330.5 46 L340.8 41M340.8 41 L351.2 36M351.2 36 L380.4 21M380.4 21 L393.7 15","R":"M508.7 493 L491.7 499 L463.4 505 L452.1 505 L444.6 503M1054.8 691 L1049.1 754M423.8 608 L497.4 595 L536.1 586M553 547 L547.4 548M433.3 519 L440.8 543 L470 671M471 475 L486.1 474 L495.5 470 L506.8 461 L516.3 451 L534.2 419 L543.6 382M520 497 L546.4 543 L547.4 548M406.9 536 L421 542 L440.8 543 L534.2 523 L558.7 512M317.3 436 L389.9 475M455.9 456 L450.2 470M432.3 382 L477.6 400M496.5 360 L457.8 327M299.3 309 L249.4 401 L231.4 437M194.6 493 L182.4 530M178.6 304 L204.1 317 L228.6 332 L254.1 344 L365.4 404M246.5 436 L310.7 316M366.3 247 L325.7 323M290.9 423 L339.9 331M351.2 337 L302.2 429M403.1 276 L365.4 345M242.8 514 L270.1 458M334.2 433 L378.6 351M389.9 357 L365.4 404M583.2 433 L534.2 419M544.6 336 L552.1 334 L554.9 327 L552.1 320 L547.4 317 L539.8 319 L536.1 323 L537 332 L544.6 336M604.9 361 L553 332M547.4 317 L562.5 265M513.4 274 L539.8 319M412.5 563 L409.7 567M323.9 628 L340.8 571M349.3 600 L330.5 658M306.9 628 L321 591M308.8 587 L291.8 629M289 577 L352.2 455M289 629 L263.5 619 L237.1 602 L219.2 593 L217.3 590M288 543 L250.3 610M297.5 583 L277.6 624M226.7 623 L230.5 620 L237.1 602M248.4 522 L235.2 562M222 508 L206.9 553M190.9 553 L191.8 548M130.5 387 L208.8 429M232.4 393 L154.1 351M411.6 -55 L288 7M277.6 -12 L548.3 -146M333.3 -108 L382.3 -9M392.7 398 L415.3 410M415.3 347 L288 278M267.3 259 L290.9 273M223.9 219 L386.1 307 L415.3 321M287.1 253 L306.9 215M154.1 472 L156.9 467M287.1 164 L283.3 166M326.7 224 L322 223 L243.7 181M190.9 370 L215.4 324M828.4 149 L941.6 121M918 155 L659.6 213M925.6 189 L962.4 345M900.1 286 L879.4 198M776.6 394 L962.4 356M611.5 156 L669.1 143M987.8 11 L984.1 10 L953.9 17 L769 62M733.2 308 L779.4 500 L789.8 551 L795.4 568M841.6 206 L894.5 428M702.1 78 L715.3 131M757.7 86 L760.5 99 L762.4 101M913.3 -2 L921.8 -4 L926.5 -3 L929.4 -2 L934.1 5 L926.5 13 L918 17M885 110 L889.7 134M866.2 39 L854.9 -7M796.4 531 L804.9 434M674.7 121 L637.9 131M637 273 L973.7 201M590.8 167 L610.6 247M625.7 292 L620 291 L611.5 254M692.6 346 L685.1 346 L609.6 362M849.2 414 L811.5 423 L579.5 470 L576.6 469M673.8 749 L637.9 600 L611.5 479 L594.5 412M647.4 408 L704.9 396M757.7 412 L654 434 L602.1 443M919.9 236 L923.7 250M721.9 464 L803 447M564.4 510 L569.1 508M801.1 478 L670 505M799.2 496 L576.6 541 L553 547M681.3 556 L796.4 531M795.4 568 L591.7 609 L562.5 616 L552.1 622M597.4 502 L604.9 536M585.1 505 L592.7 538M608.7 535 L623.8 602M946.3 571 L797.3 578M648.3 563 L640.8 528M656.8 525 L670.9 593M685.1 519 L692.6 554M737 526 L688.9 536M685.1 573 L745.4 560M521.9 694 L524.8 709M516.3 664 L526.6 660 L671.9 630M608.7 776 L573.8 621M943.5 607 L521.9 694M441.8 752 L451.2 745M711.5 614 L704.9 586M726.6 613 L720 583M734.1 580 L739.8 612M698.3 741 L669.1 616M631.3 639 L657.7 754M643.6 760 L624.7 673M553 724 L569.1 792M719 717 L749.2 711M727.5 621 L736 650 L752 723M766.2 718 L758.7 681M867.1 685 L841.6 576M844.5 590 L892.6 588M839.8 693 L825.6 632M837.9 629 L852 689M869 623 L883.1 680M897.3 678 L884.1 620M790.7 2 L754.9 -71M817.1 -29 L802 -59M750.2 5 L922.8 -81M768.1 -4 L753.9 -34M601.1 -89 L653 16M545.5 -54 L565.3 -14M518.1 -48 L555.9 28M521.9 69 L522.9 66 L476.7 -27M514.4 11 L491.7 -34M416.3 60 L423.8 76M361.6 60 L395.5 42M408.7 7 L420.1 31M419.1 2 L426.7 16M441.8 80 L435.2 68M495.5 58 L481.4 28M491.7 4 L506.8 -3M261.6 270 L285.2 284M169.2 474 L185.2 442M191.8 548 L172 513M229.5 441 L365.4 514M329.5 220 L316.3 157M338 123 L351.2 178M425.7 288 L405.9 201M468.2 270 L469.1 264 L461.6 229 L431.4 101M457.8 154 L460.6 167M476.7 106 L521.9 95M569.1 59 L569.1 69M1062.3 595 L1068 573 L1085 483M1018 9 L1016.1 12 L1004.8 13M973.7 201 L978.4 200M955.8 39 L953.9 17 L944.5 -28M934.1 5 L951.1 1M906.7 47 L932.2 47M951.1 46 L972.7 45M959.5 73 L959.5 76M921.8 -22 L926.5 -17 L947.3 -16M1003.9 202 L1018 21M969.9 258 L974.6 258M984.1 68 L987.8 68M1051 661 L1104.8 663M1069.9 679 L1076.5 594M1072.7 637 L1108.6 639M1071.8 650 L1106.7 653M1071.8 553 L1123.6 549M1068 573 L1117 569M980.3 112 L985 112M1068.9 750 L1074.6 691M1029.3 752 L1033.1 691M835 876 L842.6 769 L840.7 741 L844.5 726 L844.5 709M911.4 692 L908.6 757 L899.2 873 L894.5 952M864.3 767 L855.8 877 L852 949M1083.1 852 L1000.1 853M1064.2 817 L1063.3 852M759.6 773 L754.9 737M820.9 716 L823.7 720 L821.8 771M744.5 775 L740.7 742M715.3 779 L711.5 751M693.6 757 L696.4 782M744.5 797 L756.8 799M705.8 875 L749.2 886M622.8 811 L670 822M613.4 851 L657.7 861M628.5 869 L610.6 864M535.1 763 L490.8 749M485.1 766 L535.1 781M534.2 800 L480.4 784M365.4 602 L342.7 670M305.9 869 L370.1 680M285.2 650 L227.7 821M377.6 849 L428.6 700M399.3 690 L340.8 861M381.4 741 L399.3 785 L414.4 829 L419.1 836M256 640 L203.1 796M255 831 L340.8 860M173 800 L58.8 806M174.8 792 L200.3 802M384.2 748 L408.7 757M409.7 805 L427.6 747M447.4 731 L422.9 809 L411.6 839M455.9 765 L438 814M443.6 798 L466.3 806M90 576 L117.3 491 L130.5 460M58.8 819 L61.7 716 L64.5 709M189.9 646 L184.3 662M157.9 741 L132.4 741M501.2 317 L521.9 302 L535.1 296 L553 297 L570 307 L574.7 315M398.4 602 L400.3 597M500.2 467 L511.5 485M431.4 496 L429.5 503 L433.3 509 L436.1 510 L442.7 507 L444.6 501 L440.8 495 L435.2 494 L431.4 496M508.7 493 L511.5 498 L515.3 499 L520 497 L522.9 491 L520 486 L515.3 484 L509.7 487 L507.8 491 L508.7 493M442.7 507 L465.3 510 L495.5 504 L511.5 498M580.4 313 L572.9 305 L554 293 L535.1 293 L520 299 L498.3 314M389.9 169 L553 131 L618.1 117 L624.7 117M554 325 L615.3 306 L618.1 306 L621 309M513.4 658 L508.7 662 L499.3 665 L439.9 677M482.3 644 L488 667M482.3 644 L506.8 638M388 609 L289 577 L242.8 564M162.6 506 L68.3 475M164.5 540 L170.1 519M131.5 764 L132.4 741 L137.1 711 L171.1 611M142.8 601 L116.4 681 L115.4 765M86.2 708 L100.3 633M45.6 694 L45.6 687M22.1 685 L67.3 690M-10 644 L24.9 646M18.3 731 L61.7 733M47.5 710 L46.6 733M96.6 766 L97.5 804M13.6 799 L59.8 795M141.8 788 L173 800M202.2 846 L201.3 899M224.8 893 L223.9 843M-38.3 870 L-3.4 868 L8.8 864 L43.7 859M7 885 L69.2 886M30.5 845 L26.8 886M114.5 877 L147.5 878M129.6 877 L129.6 916M496.5 884 L511.5 822M485.1 886 L462.5 957M426.7 867 L406.9 911M357.8 873 L361.6 888 L383.3 900M342.7 878 L349.3 898 L372 916M201.3 492 L229.5 441M9.8 507 L84.3 309M-37.4 430 L7.9 311 L7 307M-55.3 344 L96.6 402M109.8 367 L-15.7 321M-4.4 559 L0.4 508M394.6 861 L392.7 864 L349.3 898M604.9 890 L627.6 793M582.3 823 L571 872M242.8 564 L246.5 567M617.2 297 L614.4 303 L553 322M156 848 L220.1 845 L223.9 843M47.5 859 L146.5 847 L156 848M166.4 848 L162.6 909M582.3 823 L584.2 817M11.7 391 L-48.7 368M1018 892 L1019 876M460.6 764 L455.9 765M439.9 677 L436.1 686M772.8 732 L778.5 771M-5.3 627 L-94 632M356.9 48 L351.2 36M333.3 89 L333.3 84 L325.7 72M322.9 51 L330.5 46M-18.5 711 L-19.4 729M17.3 746 L-19.4 746M-19.4 746 L-19.4 729M-6.2 441 L71.1 470M159.8 260 L182.4 197M108.8 406 L100.3 403M7 645 L10.7 629 L13.6 623 L14.5 614 L19.2 605M48.5 293 L48.5 290M202.2 155 L229.5 172M197.5 205 L173.9 256M113.5 368 L125.8 373M1.3 422 L-60.9 400M197.5 162 L210.7 213M179.6 196 L210.7 213M283.3 465 L296.5 438M367.2 511 L237.1 441M403.1 531 L372 515M371 517 L404 534M243.7 440 L214.5 498M213.5 428 L132.4 384M156.9 467 L305 189M371 511 L386.1 481 L390.8 479M366.3 511 L365.4 516 L370.1 518 L372 516 L371 511 L366.3 511M504 624 L475.7 503 L471 475M477.6 706 L485.1 738M401.2 684 L425.7 690 L430.4 694M724.7 73 L720 53M217.3 -81 L240.9 -19M48.5 296 L124.9 325M130.5 310 L89 295M94.7 280 L139 287M84.3 309 L94.7 280M20.2 579 L-24.2 579M-63.8 607 L7.9 602M1060.5 880 L1060.5 876M64.5 709 L66.4 706 L73 624 L87.1 582M59.8 770 L16.4 772M471.9 69 L450.2 81 L448.4 86M191.8 548 L242.8 564M53.2 503 L-18.5 475M552.1 622 L542.7 580M394.6 477 L424.8 472 L450.2 470M960.5 756 L956.7 790 L947.3 935M638.9 -13 L679.4 -34M832.2 -1 L829.4 -4M351.2 178 L366.3 247M316.3 157 L287.1 164M305 189 L351.2 178M521.9 244 L648.3 215M316.3 157 L311.6 136M619.1 331 L733.2 308M540.8 -2 L457.8 40M140.9 439 L169.2 439 L173.9 443 L202.2 442M513.4 340 L496.5 360 L477.6 400 L455.9 456M84.3 435 L-55.3 385M414.4 567 L422.9 542 L436.1 510M810.5 109 L818.1 107M89 415 L73 409M96.6 766 L73 767M185.2 762 L96.6 766M184.3 662 L166.4 721 L157.9 741 L130.5 823M677.5 785 L674.7 764M1063.3 17 L1122.7 21M1022.7 -35 L1018 9M803.9 705 L772.8 573M45.6 687 L51.3 616M26.8 886 L26.8 892M340.8 12 L327.6 -13M146.5 334 L129.6 327M166.4 298 L144.7 286 L139 287M154.1 274 L173 286M725.6 -20 L720 -17M569.1 69 L586.1 144M397.4 168 L384.2 112M905.8 789 L929.4 790M956.7 790 L935 789M589.8 783 L552.1 622M973.7 35 L972.7 45M951.1 41 L973.7 35 L986 36M686 80 L662.5 78 L661.5 79 L658.7 77 L375.7 144M498.3 201 L456.8 211M654 191 L550.2 215M1061.4 615 L1062.3 595M1076.5 594 L1077.4 580M1074.6 615 L1090.6 616M70.2 650 L24.9 646M345.6 663 L358.8 670 L401.2 684M372 674 L389.9 627M877.5 879 L886 773 L885 744 L890.7 695M530.4 851 L519.1 848 L521 844M522.9 849 L521.9 854M543.6 870 L559.6 873M246.5 567 L387.1 612M342.7 567 L367.2 517M450.2 470 L464.4 471M519.1 682 L521.9 680 L526.6 672M440.8 495 L452.1 470M450.2 470 L439.9 495M653 16 L613.4 36M690.7 80 L686 80M769 62 L690.7 80M673.8 142 L693.6 137M669.1 143 L673.8 142M621 309 L624.7 313M558.7 512 L564.4 510M569.1 508 L724.7 477 L802 459M569.1 508 L628.5 767M547.4 548 L372.9 583M488.9 737 L494.6 736M485.1 738 L488.9 737M485.1 738 L487 744M987.8 68 L1112.3 81M985 112 L1010.5 115M978.4 200 L1137.8 214M976.5 226 L971.8 225M974.6 258 L1169.9 275M967.1 356 L989.7 357M928.4 815 L775.6 804M933.1 816 L928.4 815M1090.6 236 L976.5 226M1110.4 628 L1056.7 625M1085.9 817 L933.1 816M408.7 428 L411.6 430M389.9 475 L394.6 477M404 534 L406.9 536M409.7 567 L297.5 509M433.3 509 L412.5 563M451.2 745 L455 744M455 744 L485.1 738M821.8 771 L808.6 946M350.3 648 L378.6 657M520 80 L521.9 69M831.3 -110 L861.5 -51 L877.5 -16M538 164 L519.1 83 L520 80M371 145 L316.3 157M758.7 216 L737 126M504 226 L357.8 262M325.7 323 L228.6 506M317.3 436 L268.2 528M283.3 166 L139.9 438 L140.9 439M420.1 626 L418.2 635 L401.2 684M397.4 509 L371 587M48.5 293 L48.5 296 L11.7 391 L-18.5 475M-24.2 579 L-24.2 605 L-21.3 627M-24.2 579 L-79.8 584M-37.4 645 L-13.8 643M-68.5 487 L-18.5 484M791.7 872 L799.2 773M1011.4 691 L1006.7 756M973.7 880 L983.1 761M1006.7 760 L998.2 875M494.6 736 L941.6 643M996.3 290 L999.2 260M1018 321 L1044.4 119 L1063.3 17M1018 21 L1018 18 L1020.8 15 L1024.6 15M1018 9 L1019.9 13 L1024.6 15M941.6 121 L954.8 176M932.2 79 L984.1 68M173 406 L171.1 409M217.3 384 L241.8 338M633.2 112 L680.4 101M976.5 836 L953.9 834M727.5 687 L725.6 675M903 382 L900.1 369M891.6 515 L904.8 569M776.6 587 L788.8 585M851.1 392 L847.3 393M365.4 404 L408.7 428M561.5 581 L565.3 600M362.5 701 L391.8 710M421 721 L391.8 710M958.6 93 L936 93M944.5 54 L943.5 77M172 604 L190.9 553M342.7 670 L279.5 855M111.7 803 L111.7 787M1049.1 754 L1048.2 758M-19.4 729 L18.3 731M726.6 276 L676.6 287 L633.2 295 L630.4 294M-23.2 560 L-24.2 579M-23.2 557 L-23.2 560M9.8 849 L-3.4 868 L-33.6 919M207.9 585 L176.7 593 L156.9 595 L153.2 598M797.3 578 L819 668 L824.7 698M795.4 568 L797.3 578M221.1 557 L235.2 515M205 438 L172 438M115.4 742 L60.7 743M164.5 540 L144.7 595M1039.7 876 L1044.4 817M1048.2 758 L1044.4 817M387.1 612 L388 609M584.2 817 L587 802M627.6 793 L630.4 784M659.6 868 L677.5 785M339.9 98 L359.7 88M609.6 37 L581.3 51 L578.5 55M-13.8 643 L-10 644M217.3 580 L214.5 579 L221.1 557M204.1 607 L210.7 590M209.7 588 L174.8 599M208.8 501 L191.8 548M470 671 L475.7 698M115.4 742 L132.4 741M313.5 660 L323.9 628M804.9 434 L808.6 423M804.9 434 L803.9 424M414.4 567 L409.7 567M229.5 441 L231.4 437M317.3 436 L232.4 393M297.5 509 L293.7 507M171.1 409 L156 439M281.4 469 L255 520M283.3 465 L281.4 469M371 587 L365.4 602M400.3 597 L405.9 577M228.6 506 L226.7 510M430.4 694 L439.9 699M257.8 634 L263.5 619 L289 577M388 609 L391.8 605 L398.4 602M291.8 629 L285.2 650M245.6 308 L264.4 318M264.4 318 L267.3 319M241.8 306 L245.6 308M237.1 441 L213.5 428M521.9 694 L519.1 682M519.1 682 L510.6 685M696.4 625 L708.7 623M671.9 630 L696.4 625M708.7 623 L723.8 620 L727.5 621M670 505 L619.1 516M771.9 395 L776.6 394M587.9 434 L771.9 395M559.6 873 L562.5 874M998.2 875 L998.2 880M998.2 880 L996.3 905M630.4 566 L681.3 556M540.8 585 L630.4 566M866.2 389 L851.1 392M961.4 427 L1008.6 434M904.8 569 L905.8 573M866.2 702 L863.3 762M701.1 888 L684.1 884M657.7 861 L661.5 862M795.4 550 L796.4 531M795.4 568 L795.4 550M538 891 L541.7 877M847.3 64 L869.9 58M1008.6 434 L1092.5 446M826.6 288 L969.9 258M971.8 225 L821.8 256M1052 16 L1063.3 17M1024.6 15 L1052 16M1085 249 L1040.7 244M959.5 76 L959.5 86M1063.3 17 L1072.7 -32M818.1 107 L855.8 98M796.4 113 L810.5 109M72 886 L96.6 882 L98.4 883 L101.3 894 L82.4 901M-10 699 L-10 710M69.2 886 L72 886M538.9 219 L504 226M661.5 861 L681.3 865M795.4 550 L745.4 560M1039.7 882 L1039.7 876M776.6 776 L766.2 943M941.6 643 L946.3 642M785.1 326 L783.2 317M803 415 L804.9 410 L785.1 326M903.9 301 L900.1 286M933.1 427 L903.9 301M365.4 345 L317.3 436M506.8 638 L504 624M478.5 624 L482.3 644M625.7 878 L608.7 873M197.5 419 L207.9 400M132.4 591 L138.1 574M428.6 700 L431.4 690 L436.1 686M203.1 796 L191.8 828M288 643 L345.6 663M993.5 319 L996.3 290M989.7 357 L993.5 319M948.2 148 L918 155M399.3 177 L397.4 168M375.7 144 L371 145M311.6 136 L310.7 130M351.2 178 L377.6 172M377.6 172 L389.9 169M1013.3 358 L1018 321M614.4 165 L653 189M516.3 337 L513.4 340M536.1 329 L516.3 337M545.5 378 L548.3 370 L549.3 353 L547.4 336M543.6 382 L545.5 378M610.6 247 L606.8 249 L606.8 252 L612.5 254 L614.4 249 L610.6 247M55.1 507 L61.7 508M654.9 596 L648.3 563M498.3 314 L495.5 317M495.5 317 L486.1 327 L475.7 343 L453.1 390 L427.6 451 L422.9 465 L421.9 481 L425.7 494 L429.5 500M521.9 490 L531.4 483 L547.4 461 L571 391M571 391 L571.9 387M431.4 496 L426.7 485 L426.7 472 L433.3 449 L456.8 392 L479.5 346 L498.3 320M498.3 320 L501.2 317M568.1 385 L566.2 390M566.2 390 L555.9 425 L543.6 459 L533.2 474 L520 486M571.9 387 L584.2 349 L585.1 336 L582.3 316M582.3 316 L580.4 313M574.7 315 L576.6 318M576.6 318 L579.5 322 L581.3 334 L579.5 347 L568.1 385M455.9 456 L461.6 468 L471 475M-67.5 418 L-6.2 441M71.1 470 L80.5 472M878.4 -12 L924.6 181M924.6 181 L925.6 189M877.5 -16 L878.4 -12M548.3 207 L539.8 170M539.8 170 L538 164M855.8 98 L832.2 -1M736 -25 L725.6 -20M983.1 761 L983.1 757M370.1 465 L351.2 502M351.2 502 L349.3 506M349.3 506 L323.9 557M323.9 557 L322 561M322 561 L309.7 584M309.7 584 L308.8 587M227.7 821 L224.8 830M197.5 811 L227.7 821M227.7 821 L255 831M340.8 571 L342.7 567M390.8 479 L394.6 477M406.9 534 L403.1 531M737 126 L766.2 120M855.8 98 L932.2 79M907.7 -19 L913.3 -2 L932.2 79M954.8 176 L956.7 182M805.8 259 L726.6 276M682.3 109 L686 109 L693.6 137 L707.7 202 L714.3 225M726.6 276 L733.2 308M733.2 308 L815.2 290M959.5 391 L888.8 407 L852 413M852 413 L849.2 414M714.3 225 L715.3 232M715.3 232 L726.6 276M783.2 317 L760.5 223M760.5 223 L758.7 216M795.4 10 L840.7 199M840.7 199 L841.6 206M879.4 198 L877.5 191M877.5 191 L855.8 98M693.6 137 L737 126M737 126 L724.7 73M660.6 189 L828.4 149M941.6 121 L980.3 112M932.2 79 L941.6 121M61.7 508 L187.1 547M187.1 547 L191.8 548M1010.5 115 L1103.8 126M555.9 28 L569.1 57M653 16 L661.5 34M416.3 60 L383.3 77M720 -17 L694.5 -5M325.7 72 L317.3 59 L322.9 51M443.6 87 L441.8 80M471.9 69 L514.4 49M514.4 49 L595.5 8M595.5 8 L598.3 6M613.4 36 L609.6 37M665.3 -64 L584.2 -23M584.2 -23 L580.4 -22M580.4 -22 L540.8 -2M598.3 6 L638.9 -13M905.8 -23 L907.7 -19M694.5 -5 L653 16M399.3 26 L405 38M410.6 48 L416.3 60M769 -42 L736 -25M910.5 -49 L903.9 -29 L905.8 -23M457.8 40 L428.6 54M380.4 102 L375.7 92M372 82 L365.4 68M829.4 -4 L817.1 -29M327.6 -13 L304.1 -61M625.7 884 L627.6 878 L625.7 878M389.9 627 L387.1 622 L387.1 612M951.1 46 L951.1 54 L937.8 54 L937.8 48 L932.2 47 L934.1 44 L945.4 41 L951.1 41 L951.1 46M391.8 627 L398.4 602M223.9 843 L222.9 840M405 38 L420.1 31M420.1 31 L488 -3M959.5 61 L960.5 72M191.8 401 L217.3 413M216.3 384 L210.7 394M-18.5 475 L-19.4 509 L-23.2 557M361.6 60 L356.9 48M359.7 88 L372 82M365.4 68 L361.6 60M375.7 92 L372 82M423.8 76 L429.5 86 L429.5 90M383.3 77 L372 82M395.5 42 L405 38M405 38 L410.6 48M393.7 15 L399.3 26M428.6 54 L416.3 60","W":"M509.7 649 L506.8 638M505.9 683 L500.2 677 L500.2 661 L506.8 650 L512.5 647 L517.2 648M694.5 -5 L665.3 -64M152.2 23 L149.4 35 L148.4 59 L151.3 73 L160.7 91M90 156 L48.5 187 L40.9 186 L37.1 179 L41.9 165 L44.7 160 L61.7 143 L77.7 129 L90.9 123 L120.1 112 L128.6 110 L139.9 110M206 94 L219.2 87M247.5 73 L287.1 53M521 649 L524.8 651 L527.6 663 L526.6 669 L524.8 674 L519.1 681 L510.6 684M690.7 18 L686 23 L685.1 28 L686 29 L690.7 25 L698.3 25 L696.4 33 L699.2 32 L699.2 35 L697.3 38 L694.5 39 L688.9 38 L687.9 42 L693.6 47 L702.1 49 L712.4 46 L719 36 L719 32 L717.2 32 L715.3 24 L712.4 21 L714.3 19 L706.8 14 L697.3 14 L690.7 18M720 53 L717.2 48M117.3 95 L88.1 86M195.6 138 L194.6 147 L189.9 162 L183.3 170 L176.7 172M-33.6 230 L60.7 225 L74.9 219M16.4 772 L11.7 773 L-31.7 770M198.4 624 L200.3 624 L192.8 647 L188 646 L196.5 623 L198.4 624M24.9 581 L26.8 577 L24.9 581M33.4 102 L52.2 98 L88.1 86 L105.1 82 L124.9 81 L142.8 84M1076.5 60 L1075.5 77M488 434 L500.2 438 L505.9 431 L505.9 422 L501.2 422 L493.6 418 L491.7 419 L488 426 L488 434M935 598 L940.7 598 L942.6 596 L942.6 591 L938.8 591 L936 593 L935 598M743.6 83 L731.3 86M139.9 110 L158.8 115 L173.9 112 L180.5 107M139.9 110 L147.5 123 L150.3 136 L159.8 158 L156 164 L144.7 174M-32.6 105 L15.5 104 L33.4 102M142.8 84 L164.5 93 L175.8 102 L195.6 124 L195.6 138M176.7 172 L148.4 226 L142.8 233 L135.2 239 L123 242 L94.7 242 L74.9 249 L50.3 264 L25.8 273 L9.8 277 L-11.9 278M-19.4 746 L-42.1 748M-44 729 L-19.4 729M73 767 L59.8 767M219.2 87 L247.5 73M731.3 86 L727.5 87M969 514 L969.9 513 L972.7 517 L995.4 501 L1000.1 508 L973.7 527 L976.5 530 L965.2 538 L983.1 564 L975.6 570 L970.9 563 L963.3 568 L959.5 563 L966.1 558 L956.7 546 L956.7 541 L959.5 538 L957.7 532 L973.7 520 L969 514M117.3 95 L127.7 97 L133.3 101 L139 107 L139.9 110M88.1 153 L90.9 158 L99.4 153 L106.9 153 L118.3 147 L128.6 147 L135.2 144 L136.2 142 L135.2 139 L121.1 145 L118.3 137 L115.4 137 L113.5 138 L114.5 140 L108.8 142 L108.8 144 L105.1 146 L105.1 144 L90 148 L91.8 151 L88.1 153M717.2 48 L713.4 44M700.2 8 L694.5 -5M100.3 -38 L96.6 -43 L93.7 -27 L116.4 -23 L117.3 -26 L114.5 -26 L106.9 -37 L100.3 -38M185.2 168 L181.4 162 L176.7 160 L170.1 160 L170.1 158M195.6 138 L190.9 149M141.8 179 L139.9 182 L132.4 187 L113.5 194 L74.9 219M144.7 174 L141.8 179M-11.9 278 L-48.7 273M190.9 149 L176.7 172M701.1 14 L700.2 8M952.9 649 L956.7 649 L956.7 645 L952 645 L952.9 649M140.9 439 L134.3 439 L130.5 441"},"parks":"M466.3 469 L473.8 472 L483.3 471 L503.1 461 L514.4 448 L530.4 417 L541.7 383 L514.4 345 L510.6 345 L498.3 361 L457.8 456 L466.3 469ZM238 708 L261.6 716 L268.2 695 L245.6 687 L238 708ZM805.8 259 L813.4 289 L826.6 288 L828.4 286 L826.6 269 L821.8 256 L805.8 259ZM790.7 95 L762.4 102 L770.9 137 L799.2 130 L790.7 95ZM-34.5 780 L-33.6 815 L-30.8 818 L-6.2 817 L-15.7 806 L-29.8 776 L-36.4 771 L-34.5 780ZM571 871 L582.3 823 L554 819 L562.5 858 L571 871ZM282.4 871 L283.3 874 L280.5 882 L298.4 878 L282.4 871ZM564.4 874 L568.1 888 L599.3 896 L602.1 899 L600.2 907 L634.2 915 L564.4 874ZM410.6 852 L396.5 857 L405.9 859 L410.6 852ZM655.8 210 L648.3 237 L662.5 235 L655.8 210ZM239.9 155 L239.9 173 L249.4 155 L251.2 156 L252.2 154 L251.2 144 L240.9 126 L239.9 155ZM10.7 777 L-26 775 L-13.8 797 L8.8 798 L10.7 777ZM990.7 70 L1008.6 72 L1011.4 75 L1009.5 108 L1006.7 112 L987.8 111 L986 107 L988.8 72 L990.7 70ZM943.5 122 L978.4 115 L973.7 170 L955.8 174 L943.5 122ZM206.9 -14 L159.8 -16 L155 14 L186.2 19 L192.8 18 L208.8 -7 L206.9 -14ZM549.3 334 L553 330 L553 324 L548.3 318 L542.7 318 L538 322 L537 330 L543.6 335 L549.3 334ZM364.4 775 L359.7 773 L357.8 779 L346.5 775 L345.6 777 L351.2 779 L351.2 777 L362.5 782 L364.4 775ZM364.4 766 L361.6 772 L365.4 774 L367.2 767 L364.4 766ZM348.4 763 L346.5 767 L350.3 769 L352.2 764 L348.4 763ZM356.9 784 L363.5 786 L373.8 759 L372.9 751 L377.6 751 L364.4 789 L355.9 786 L356.9 784ZM839.8 205 L838.8 201 L804.9 208 L805.8 212 L839.8 205ZM841.6 201 L876.5 194 L876.5 197 L842.6 204 L841.6 201ZM922.8 184 L923.7 187 L880.3 196 L879.4 193 L922.8 184ZM953.9 177 L926.5 183 L927.5 187 L954.8 181 L953.9 177ZM973.7 174 L956.7 177 L957.7 180 L973.7 177 L973.7 174ZM475.7 277 L481.4 286 L496.5 271 L486.1 276 L475.7 277ZM593.6 164 L600.2 164 L607.7 157 L607.7 149 L602.1 142 L594.5 141 L588.9 144 L585.1 150 L586.1 159 L593.6 164ZM982.2 -32 L980.3 -18 L986.9 -17 L987.8 -33 L982.2 -32ZM520 488 L517.2 486 L511.5 487 L509.7 494 L514.4 498 L520 496 L520 488ZM946.3 49 L946.3 53 L938.8 53 L937.8 47 L935 46 L951.1 42 L951.1 47 L946.3 49ZM250.3 29 L270.1 3 L275.8 4 L285.2 20 L285.2 27 L278.6 34 L250.3 29ZM739.8 366 L730.4 368 L748.3 379 L746.4 372 L739.8 366ZM-21.3 746 L-22.3 730 L-43 730 L-43 742 L-40.2 747 L-21.3 746ZM605.9 250 L606.8 253 L571.9 260 L565.3 261 L556.8 258 L558.7 255 L561.5 258 L573.8 257 L605.9 250ZM677.5 31 L681.3 41 L621.9 52 L622.8 49 L652.1 41 L651.1 38 L677.5 31ZM501.2 272 L497.4 276 L521 271 L517.2 269 L501.2 272ZM536.1 265 L524.8 267 L532.3 269 L563.4 264 L551.2 262 L536.1 265ZM961.4 322 L958.6 321 L961.4 329 L961.4 322ZM966.1 261 L962.4 262 L965.2 270 L966.1 261ZM811.5 414 L810.5 409 L806.8 409 L810.5 421 L819 419 L811.5 414ZM776.6 395 L774.7 396 L803.9 413 L776.6 395ZM753 379 L751.1 381 L772.8 395 L775.6 394 L753 379ZM1010.5 14 L1017.1 18 L1020.8 15 L1018 11 L1010.5 14ZM925.6 -20 L942.6 -24 L943.5 -17 L925.6 -20ZM506.8 266 L511.5 265 L509.7 263 L506.8 266ZM952.9 582 L964.3 597 L952 598 L952.9 582ZM835 449 L834.1 438 L856.7 450 L863.3 480 L856.7 461 L851.1 461 L848.3 454 L843.5 455 L839.8 452 L838.8 448 L835 449ZM975.6 527 L998.2 509 L1019.9 537 L1011.4 543 L1008.6 539 L999.2 546 L996.3 536 L992.6 531 L978.4 531 L975.6 527ZM929.4 467 L925.6 469 L927.5 472 L935 468 L934.1 466 L929.4 467ZM758.7 13 L760.5 16 L827.5 -2 L758.7 13ZM359.7 261 L363.5 254 L370.1 258 L359.7 261ZM843.5 485 L854.9 481 L855.8 485 L864.3 483 L883.1 570 L863.3 571 L843.5 485ZM644.5 915 L644.5 912 L639.8 911 L639.8 906 L627.6 899 L627.6 895 L605.9 891 L602.1 889 L603 884 L582.3 880 L644.5 915ZM929.4 544 L929.4 547 L931.2 547 L932.2 545 L929.4 544ZM441.8 500 L436.1 497 L432.3 500 L433.3 506 L439.9 508 L442.7 504 L441.8 500ZM801.1 213 L800.2 209 L761.5 218 L761.5 221 L801.1 213ZM758.7 222 L757.7 218 L719 226 L720 230 L758.7 222ZM713.4 231 L712.4 228 L667.2 237 L668.1 240 L713.4 231ZM663.4 238 L663.4 241 L646.4 245 L647.4 241 L663.4 238ZM615.3 248 L615.3 251 L638.9 247 L639.8 243 L615.3 248ZM253.1 112 L242.8 111 L243.7 122 L249.4 134 L277.6 128 L276.7 123 L272.9 119 L253.1 112ZM349.3 866 L350.3 868 L410.6 849 L455 832 L349.3 866ZM477.6 823 L477.6 825 L503.1 820 L535.1 812 L535.1 810 L477.6 823ZM552.1 808 L719 742 L719 740 L671.9 756 L551.2 805 L552.1 808ZM726.6 738 L780.3 720 L780.3 722 L727.5 740 L726.6 738ZM416.3 336 L418.2 316 L427.6 299 L441.8 287 L453.1 282 L467.2 280 L475.7 291 L434.2 358 L429.5 362 L423.8 359 L417.2 346 L416.3 336ZM109.8 439 L125.8 438 L129.6 450 L106.9 440 L107.9 437 L109.8 439ZM242.8 487 L248.4 477 L256.9 481 L251.2 492 L242.8 487ZM289.9 633 L285.2 646 L262.6 637 L289.9 633ZM921.8 -2 L929.4 -1 L931.2 6 L919 14 L916.2 0 L921.8 -2ZM626.6 329 L621.9 330 L624.7 318 L626.6 329ZM806.8 459 L810.5 429 L815.2 426 L825.6 431 L824.7 442 L832.2 443 L833.2 449 L830.3 449 L830.3 454 L824.7 460 L806.8 459Z","roma":"M990.4 11.2 L994.5 -41.7 L943 -29.7 L939 -28.7 L906.6 -21.2 L902.3 -20.1 L878.5 -14.6 L855 -9 L832.3 -3.4 L830.3 -3 L795.1 4.9 L792.6 5.6 L755.3 15.4 L719.8 23.7 L720.6 25.6 L720.8 26.1 L721.1 27.2 L721.5 28.7 L721.7 30.6 L721.8 33.1 L721.6 35.4 L721.2 37.6 L720.2 40.7 L718.7 43.5 L716.5 46.4 L714.8 48.2 L712.8 49.7 L709.5 51.5 L707.6 52.2 L705.7 52.8 L703.6 53.1 L701.1 53.2 L698.3 53 L697.1 52.7 L695 52.1 L691.4 50.7 L689.1 49.2 L688.2 48.5 L686.7 47.3 L684.6 44.6 L683 42 L681.7 38.7 L680.7 33.8 L681 29.8 L661.4 35 L615.7 48.1 L350.5 112.4 L335.4 116.3 L309.1 122.5 L296.2 125.3 L289.7 126.3 L285.8 126.5 L279 125.4 L278.3 130.4 L277.9 132.1 L277.2 134.6 L274.8 138.2 L272.7 140.8 L271 143.3 L269.9 145.1 L285.4 167 L298.5 184.3 L325 215.1 L366.6 249.5 L376.5 257.7 L402.8 277.2 L427.2 295.3 L435.1 289 L443.8 285.4 L470 277.4 L480.1 292.9 L498 273.7 L510.3 272.1 L559.4 260.8 L561.8 262.2 L625.2 303 L623.4 309.1 L616.3 333 L607.3 363.5 L598.1 392.3 L596.9 395.8 L592.6 410.9 L584.9 436.2 L574.9 471.5 L607.1 465 L657.9 454.1 L715.9 442.3 L762.7 432.6 L805.7 423.1 L810.6 424.9 L818.6 423.7 L834.8 429.9 L856.4 430.4 L893.7 428.1 L958.8 427.7 L984.3 68.1 L987.3 35.1 L990.4 11.2Z","condesa":"M269.9 145.1 L264.7 145.9 L259.9 147.2 L256 152.4 L245.1 171.1 L236.6 177.1 L232.5 188.2 L226.1 202.5 L218.9 216.3 L198.5 255.7 L181.1 289 L174.2 301.8 L156.2 337.8 L150.6 348.5 L134.7 376.8 L130.4 384 L123.6 396.2 L115.3 408.1 L98.8 437.1 L87.1 456.2 L74.1 474 L74 474.1 L71.7 478.3 L56.3 506.5 L54.8 509.3 L31 559.1 L88.6 579.4 L143.6 598 L144.9 598.4 L172 607.5 L200.4 617.6 L230.9 628.4 L256.6 638.4 L285.8 649.2 L314.2 659.2 L327.5 664 L342.8 669.3 L371.8 679.7 L398.5 689 L425.8 696.9 L428.8 697.9 L442.7 702.4 L450.2 728.4 L453.9 746.2 L456.4 758.7 L456.6 760.1 L469 808.9 L469.4 813.3 L477.8 786.2 L482.9 769.6 L488.3 752.7 L492.3 738.4 L503.9 701.8 L512.7 672.7 L515.2 664.2 L519.1 650.6 L528.6 623.3 L539.9 587 L550.8 548.8 L562.8 510.6 L574.9 471.5 L584.9 436.2 L592.6 410.9 L596.9 395.8 L598.1 392.3 L607.3 363.5 L616.3 333 L623.4 309.1 L625.2 303 L561.8 262.2 L559.4 260.8 L510.3 272.1 L498 273.7 L480.1 292.9 L470 277.4 L443.8 285.4 L435.1 289 L427.2 295.3 L402.9 277.2 L376.5 257.7 L366.6 249.5 L325 215.1 L298.5 184.3 L285.4 167 L269.9 145.1Z","condesaParts":["M269.9 145.1 L264.7 145.9 L259.9 147.2 L256 152.4 L245.1 171 L236.6 177.1 L232.5 188.2 L226.1 202.5 L218.9 216.3 L198.5 255.7 L181.1 289 L174.2 301.8 L156.2 337.8 L150.6 348.5 L134.7 376.8 L130.4 384 L123.6 396.2 L115.3 408.1 L98.8 437.1 L128.2 454.3 L136.4 461.4 L155.7 473.5 L170.9 443 L185.7 442.8 L206 443.5 L229 442.6 L236.1 442.3 L244.8 441.8 L264.3 440.8 L298.7 439.1 L317.3 438.9 L333.2 437.4 L333.3 437.4 L333.6 437.5 L344.9 437 L355.7 439.5 L376.8 414.9 L389.7 399.9 L412.1 372.8 L419.3 371.8 L423.4 372 L432 376.5 L457.5 328.8 L480.1 292.9 L470 277.4 L443.8 285.4 L435.1 289 L427.2 295.3 L402.8 277.2 L376.5 257.7 L366.6 249.5 L325 215.1 L298.5 184.3 L285.4 167 L269.9 145.1Z","M480.1 292.9 L457.5 328.8 L432 376.5 L423.4 372 L419.3 371.8 L412.1 372.8 L389.7 399.9 L376.8 414.9 L355.7 439.5 L342.9 454.1 L321.4 478.5 L313.4 487.6 L308.1 494.2 L294.5 510.7 L272.1 535.8 L245 567.1 L212.2 588.6 L210 590.1 L174.9 598.8 L144.9 598.4 L172 607.5 L200.4 617.7 L230.9 628.4 L256.6 638.4 L285.8 649.2 L314.2 659.2 L327.5 664 L342.8 669.3 L371.8 679.7 L398.5 689 L425.8 696.9 L428.8 697.9 L442.7 702.4 L450.2 728.4 L453.9 746.2 L456.4 758.7 L456.6 760.1 L469 808.9 L469.4 813.3 L477.8 786.2 L482.9 769.6 L488.3 752.7 L492.3 738.4 L503.9 701.8 L512.7 672.7 L515.2 664.2 L519.1 650.6 L528.6 623.3 L539.9 587 L550.8 548.8 L562.8 510.6 L574.9 471.5 L584.9 436.2 L592.6 410.9 L596.9 395.8 L598.1 392.3 L607.3 363.5 L616.3 333 L623.4 309.1 L625.2 303 L561.8 262.2 L559.4 260.8 L510.3 272.1 L498 273.7 L480.1 292.9Z","M98.8 437.1 L87.1 456.2 L74.1 474 L74 474.1 L71.7 478.3 L56.3 506.5 L54.8 509.3 L31 559.1 L88.6 579.4 L143.6 598 L144.9 598.4 L174.9 598.8 L210 590.1 L212.2 588.6 L245 567.1 L272.1 535.8 L294.5 510.7 L308.1 494.2 L313.4 487.6 L321.4 478.5 L342.9 454.1 L355.7 439.5 L344.9 437 L333.6 437.5 L333.3 437.4 L333.2 437.4 L317.3 438.9 L298.7 439.1 L264.3 440.8 L244.8 441.8 L236.1 442.3 L229 442.6 L206 443.5 L185.7 442.8 L170.9 443 L155.7 473.5 L136.4 461.4 L128.2 454.3 L98.8 437.1Z"],"condesaInner":"M98.8 437.1 L128.2 454.3M128.2 454.3 L136.4 461.4M136.4 461.4 L155.7 473.5M155.7 473.5 L170.9 443M170.9 443 L185.7 442.8M185.7 442.8 L206 443.5M206 443.5 L229 442.6M229 442.6 L236.1 442.3M236.1 442.3 L244.8 441.8M244.8 441.8 L264.3 440.9M264.3 440.9 L298.7 439.1M298.7 439.1 L317.3 438.9M317.3 438.9 L333.2 437.4M333.2 437.4 L333.3 437.4M333.3 437.4 L333.6 437.5M333.6 437.5 L344.9 437M344.9 437 L355.7 439.5M355.7 439.5 L376.8 414.9M376.8 414.9 L389.7 399.9M389.7 399.9 L412.1 372.8M412.1 372.8 L419.3 371.8M419.3 371.8 L423.4 372M423.4 372 L432 376.5M432 376.5 L457.5 328.8M457.5 328.8 L480.1 292.9M355.7 439.5 L342.9 454.1M342.9 454.1 L321.4 478.5M321.4 478.5 L313.4 487.6M313.4 487.6 L308.1 494.1M308.1 494.1 L294.5 510.7M294.5 510.7 L272.1 535.8M272.1 535.8 L245 567.1M245 567.1 L212.2 588.6M212.2 588.6 L210 590.1M210 590.1 L174.9 598.8M174.9 598.8 L144.9 598.4","labels":[{"t":"Av. Insurgentes Sur","d":"M597.8 384.2 L599.3 380 L604.9 361 L610.6 343 L621 309 L622.8 301 L628.5 283 L632.3 273 L639.8 248 L641.7 240 L645.5 228 L651.1 207 L652.9 201","len":191.4,"off":19.9},{"t":"Av. Chapultepec","d":"M823.7 1 L832.2 -1 L907.7 -19 L949.2 -28.4","len":128.9,"off":4.1},{"t":"Av. Cuauhtémoc","d":"M969.2 327.7 L969.9 318 L971.8 288 L969.9 258 L971.8 225 L973.7 201 L975.6 180 L975.6 179.6","len":148.4,"off":5.3},{"t":"Álvaro Obregón","d":"M708.4 226.3 L747.3 219 L803.9 207 L840.7 199 L853.7 196.2","len":148.4,"off":8.7},{"t":"Amsterdam","d":"M521.9 490 L531.4 483 L547.4 461 L567.4 401.5","len":101.7,"off":5.9},{"t":"Av. Nuevo León","d":"M406.6 534.9 L406.9 536 L409.7 567 L410.6 576 L412.5 579 L416.3 601 L415.3 608 L421.9 626 L434.6 679.6","len":148.4,"off":86.3},{"t":"Av. Tamaulipas","d":"M224.4 575.1 L242.8 564 L273.9 531 L313.5 482 L325.6 467.9","len":148.4,"off":103.8},{"t":"Michoacán","d":"M225.1 437.3 L330.5 433.8","len":105.4,"off":42.3},{"t":"Colima","d":"M824.4 150 L828.4 149 L901.7 130.9","len":79.6,"off":21.1},{"t":"Orizaba","d":"M809.6 277.6 L809.6 278 L813.4 289 L815.2 290 L820.9 291 L826.6 317 L827.5 309 L823.7 291 L824.7 288 L828.4 286 L827.1 278.3","len":88.2,"off":25.2},{"t":"Av. Sonora","d":"M407.9 194.1 L416.3 199 L441.8 241 L468.2 276 L462.3 266.3","len":114.0,"off":26.8},{"t":"Coahuila","d":"M743.7 436.7 L811.5 423 L838.3 416.4","len":96.8,"off":19.9}],"parkLabels":[{"t":"Parque México","x":496.7,"y":424.8},{"t":"Parque España","x":435.1,"y":321.0}],"centroids":{"roma":[634.3,155.5],"condesa":[350.1,458.3]}},"venues":[{"id":"frida","nombre":"Los de Frida","zona":"condesa","destacado":true,"pos":[332.1,460.5],"provisional":true,"habitual":{"jue":[16,24,36,48,58,56,36,16,6],"vie":[22,34,50,68,84,92,74,42,14],"sab":[26,40,56,74,90,100,84,50,18]},"vivo":{"valor":82,"hora":3}},{"id":"mezontle","nombre":"Mezontle","zona":"roma","destacado":true,"pos":[687.4,109.1],"direccion":"Av. Insurgentes Sur 184, Roma Norte","habitual":{"jue":[2,6,18,42,56,62,58,36,12],"vie":[4,10,32,76,86,90,96,72,28],"sab":[6,14,40,80,92,98,100,80,36]},"vivo":{"valor":71,"hora":3}},{"id":"c01","nombre":"Establecimiento C-01","zona":"condesa","destacado":false,"pos":[432.5,434.7],"habitual":{"jue":[32,38,51,59,59,49,31,12,9],"vie":[38,49,65,81,90,83,59,26,14],"sab":[44,54,73,90,100,92,65,28,15]},"vivo":null},{"id":"c02","nombre":"Establecimiento C-02","zona":"condesa","destacado":false,"pos":[261.8,542.0],"habitual":{"jue":[31,38,49,58,60,45,26,15,10],"vie":[39,46,62,78,90,79,52,31,14],"sab":[44,51,70,86,100,88,59,34,15]},"vivo":null},{"id":"c03","nombre":"Establecimiento C-03","zona":"condesa","destacado":false,"pos":[317.2,435.2],"habitual":{"jue":[27,39,51,58,60,48,28,14,8],"vie":[33,50,66,79,90,82,57,29,11],"sab":[36,55,74,88,100,90,62,33,12]},"vivo":null},{"id":"c04","nombre":"Establecimiento C-04","zona":"condesa","destacado":false,"pos":[535.6,479.9],"habitual":{"jue":[25,33,46,56,63,58,40,18,7],"vie":[36,40,58,73,86,89,71,40,20],"sab":[40,45,65,81,95,100,80,45,23]},"vivo":null},{"id":"c05","nombre":"Establecimiento C-05","zona":"condesa","destacado":false,"pos":[212.7,583.9],"habitual":{"jue":[28,40,50,64,59,51,32,16,9],"vie":[32,50,65,88,90,88,61,32,12],"sab":[36,55,71,96,100,98,69,36,14]},"vivo":null},{"id":"c06","nombre":"Establecimiento C-06","zona":"condesa","destacado":false,"pos":[574.8,317.3],"habitual":{"jue":[28,35,50,61,62,59,43,20,8],"vie":[42,43,65,81,85,91,76,46,20],"sab":[46,49,72,89,95,100,85,51,23]},"vivo":null},{"id":"c07","nombre":"Establecimiento C-07","zona":"condesa","destacado":false,"pos":[414.1,364.7],"habitual":{"jue":[37,45,60,65,59,44,21,6,9],"vie":[46,56,78,90,90,77,46,19,13],"sab":[51,63,87,100,99,86,51,21,14]},"vivo":null},{"id":"c08","nombre":"Establecimiento C-08","zona":"condesa","destacado":false,"pos":[449.5,392.8],"habitual":{"jue":[35,49,57,63,59,41,19,8,9],"vie":[44,62,76,87,91,73,42,21,14],"sab":[49,69,84,97,100,81,47,23,15]},"vivo":null},{"id":"c09","nombre":"Establecimiento C-09","zona":"condesa","destacado":false,"pos":[424.1,467.6],"habitual":{"jue":[32,44,56,64,59,41,19,4,8],"vie":[39,56,73,87,89,73,43,15,12],"sab":[44,61,81,97,100,81,48,16,13]},"vivo":null},{"id":"c10","nombre":"Establecimiento C-10","zona":"condesa","destacado":false,"pos":[529.8,294.3],"habitual":{"jue":[28,41,51,64,60,48,31,11,7],"vie":[33,53,65,87,91,82,59,25,9],"sab":[36,58,72,98,100,92,66,27,11]},"vivo":null},{"id":"c11","nombre":"Establecimiento C-11","zona":"condesa","destacado":false,"pos":[168.9,507.2],"habitual":{"jue":[28,38,50,60,60,47,28,15,7],"vie":[34,47,65,82,90,82,57,30,10],"sab":[37,52,72,91,100,90,63,34,11]},"vivo":null},{"id":"c12","nombre":"Establecimiento C-12","zona":"condesa","destacado":false,"pos":[414.3,566.2],"habitual":{"jue":[25,37,44,60,65,59,44,20,9],"vie":[37,45,56,79,89,89,77,45,21],"sab":[41,51,61,87,99,100,85,49,24]},"vivo":null},{"id":"c13","nombre":"Establecimiento C-13","zona":"condesa","destacado":false,"pos":[445.5,507.7],"habitual":{"jue":[36,47,59,65,59,45,20,8,8],"vie":[45,60,78,88,89,79,46,21,12],"sab":[51,66,86,99,100,87,51,24,13]},"vivo":null},{"id":"c14","nombre":"Establecimiento C-14","zona":"condesa","destacado":false,"pos":[300.1,489.9],"habitual":{"jue":[22,35,42,58,61,59,41,21,8],"vie":[32,45,54,75,85,89,73,46,20],"sab":[36,49,60,84,94,100,81,51,22]},"vivo":null},{"id":"r01","nombre":"Establecimiento R-01","zona":"roma","destacado":false,"pos":[711.4,353.7],"habitual":{"jue":[9,15,28,42,50,63,63,50,27],"vie":[13,18,33,50,64,83,90,82,56],"sab":[14,21,37,56,71,92,100,91,63]},"vivo":null},{"id":"r02","nombre":"Establecimiento R-02","zona":"roma","destacado":false,"pos":[851.4,423.7],"habitual":{"jue":[14,28,41,56,65,64,51,28,31],"vie":[16,34,49,71,86,90,85,59,45],"sab":[19,38,55,80,96,100,94,65,50]},"vivo":null},{"id":"r03","nombre":"Establecimiento R-03","zona":"roma","destacado":false,"pos":[774.7,90.9],"habitual":{"jue":[13,21,35,47,55,60,55,40,29],"vie":[14,25,40,59,73,85,89,74,44],"sab":[16,27,45,66,81,94,100,82,48]},"vivo":null},{"id":"r04","nombre":"Establecimiento R-04","zona":"roma","destacado":false,"pos":[887.7,191.6],"habitual":{"jue":[8,12,24,36,47,55,64,51,27],"vie":[12,13,28,42,60,73,91,83,55],"sab":[13,14,32,47,68,81,100,92,62]},"vivo":null},{"id":"r05","nombre":"Establecimiento R-05","zona":"roma","destacado":false,"pos":[809.5,225.4],"habitual":{"jue":[8,14,23,37,51,63,64,52,27],"vie":[12,17,27,45,65,84,90,83,55],"sab":[13,18,30,49,72,94,100,93,63]},"vivo":null},{"id":"r06","nombre":"Establecimiento R-06","zona":"roma","destacado":false,"pos":[766.4,59.9],"habitual":{"jue":[13,21,32,44,51,55,56,37,24],"vie":[15,23,37,55,67,78,90,69,36],"sab":[16,25,40,61,74,87,100,77,40]},"vivo":null},{"id":"r07","nombre":"Establecimiento R-07","zona":"roma","destacado":false,"pos":[574.6,156.8],"habitual":{"jue":[13,21,34,47,59,63,55,38,30],"vie":[14,24,39,61,78,89,89,72,45],"sab":[17,26,43,67,87,99,100,80,50]},"vivo":null},{"id":"r08","nombre":"Establecimiento R-08","zona":"roma","destacado":false,"pos":[564.0,256.0],"habitual":{"jue":[14,19,32,40,50,61,56,38,26],"vie":[17,21,38,50,65,86,89,70,38],"sab":[18,24,42,55,73,95,100,79,43]},"vivo":null},{"id":"r09","nombre":"Establecimiento R-09","zona":"roma","destacado":false,"pos":[791.8,137.6],"habitual":{"jue":[10,22,30,43,55,60,55,41,28],"vie":[11,24,34,53,74,85,90,77,40],"sab":[13,26,38,59,82,94,100,86,45]},"vivo":null},{"id":"r10","nombre":"Establecimiento R-10","zona":"roma","destacado":false,"pos":[823.0,257.6],"habitual":{"jue":[14,18,33,44,56,64,55,41,28],"vie":[18,19,38,54,75,89,91,76,41],"sab":[19,20,42,60,84,99,100,85,46]},"vivo":null},{"id":"r11","nombre":"Establecimiento R-11","zona":"roma","destacado":false,"pos":[831.3,309.8],"habitual":{"jue":[16,25,37,49,57,63,52,29,24],"vie":[21,30,45,63,76,90,84,57,35],"sab":[23,33,49,70,85,100,93,64,40]},"vivo":null},{"id":"r12","nombre":"Establecimiento R-12","zona":"roma","destacado":false,"pos":[645.8,236.5],"habitual":{"jue":[12,21,32,41,55,58,55,39,28],"vie":[13,24,36,51,73,82,89,74,41],"sab":[14,26,41,56,81,92,100,81,46]},"vivo":null},{"id":"r13","nombre":"Establecimiento R-13","zona":"roma","destacado":false,"pos":[713.6,224.7],"habitual":{"jue":[12,18,34,43,52,62,56,39,25],"vie":[15,19,39,53,69,89,91,74,36],"sab":[17,22,43,59,76,99,100,82,41]},"vivo":null},{"id":"r14","nombre":"Establecimiento R-14","zona":"roma","destacado":false,"pos":[623.9,307.6],"habitual":{"jue":[14,20,33,46,56,61,56,39,27],"vie":[16,22,38,58,75,85,90,73,38],"sab":[19,24,42,65,84,95,100,81,43]},"vivo":null},{"id":"r15","nombre":"Establecimiento R-15","zona":"roma","destacado":false,"pos":[609.8,250.5],"habitual":{"jue":[11,18,30,44,53,61,55,36,27],"vie":[11,18,34,54,70,85,90,70,38],"sab":[13,20,38,61,76,94,100,78,43]},"vivo":null},{"id":"r16","nombre":"Establecimiento R-16","zona":"roma","destacado":false,"pos":[937.2,76.9],"habitual":{"jue":[11,15,27,38,51,62,63,53,29],"vie":[18,19,32,46,65,84,90,86,59],"sab":[19,20,35,51,72,94,100,95,66]},"vivo":null}]};
+
+window.P1_VENUES = [{"i":"c_wichitos","n":"Wichitos","z":"c","t":"b","x":333.5,"y":471.0,"c":1,"f":[94,100,98,91,64,0,0,0,0],"fj":[42,24,19,19,0,0,0,0,0],"fs":[33,38,33,21,14,0,0,0,0]},{"i":"c_wallace","n":"Wallace Whisky Bar","z":"c","t":"p","x":386.8,"y":389.1,"c":1,"f":[48,66,81,86,69,53,0,0,0],"fj":[26,34,39,39,30,22,0,0,0],"fs":[54,75,93,100,79,59,0,0,0]},{"i":"c_celtics","n":"Celtics Pub","z":"c","t":"p","x":395.2,"y":381.1,"c":1,"f":[72,89,100,97,70,44,0,0,0],"fj":[42,46,47,44,31,0,0,0,0],"fs":[69,86,97,90,66,41,0,0,0]},{"i":"c_malafama","n":"Salón Malafama","z":"c","t":"b","x":365.2,"y":441.6,"c":1,"f":[79,93,100,97,75,51,28,0,0],"fj":[57,63,63,58,41,26,12,0,0],"fs":[79,93,98,89,69,48,28,0,0]},{"i":"c_drunkendog","n":"Drunkendog","z":"c","t":"p","x":491.9,"y":288.2,"c":1,"f":[84,95,100,91,61,0,0,0,0],"fj":[48,44,35,0,0,0,0,0,0],"fs":[79,83,81,67,45,0,0,0,0]},{"i":"c_xampa","n":"La Xampa","z":"c","t":"b","x":433.2,"y":387.8,"c":1,"f":[74,86,93,100,72,61,0,0,0],"fj":[69,72,74,69,61,45,0,0,0],"fs":[86,89,93,91,74,57,0,0,0]},{"i":"c_trampa","n":"Trampa","z":"c","t":"b","x":252.4,"y":514.0,"c":1,"f":[80,86,92,86,57,33,0,0,0],"fj":[64,69,73,66,48,28,0,0,0],"fs":[75,90,100,99,74,48,0,0,0]},{"i":"limantour","n":"Licorería Limantour","z":"r","t":"b","x":815.4,"y":216.9,"c":1,"f":[67,82,92,92,67,41,0,0,0],"fj":[55,61,63,57,40,24,0,0,0],"fs":[75,90,100,98,71,44,0,0,0]},{"i":"rayo","n":"Rayo","z":"r","t":"b","x":496.7,"y":211.6,"c":1,"f":[36,51,57,57,42,27,0,0,0],"fj":[27,36,43,42,31,21,0,0,0],"fs":[61,87,96,100,73,51,0,0,0]},{"i":"tlecan","n":"Tlecān","z":"r","t":"b","x":623.4,"y":256.4,"c":1,"f":[79,88,97,99,75,53,0,0,0],"fj":[63,66,71,67,52,35,0,0,0],"fs":[76,92,100,98,73,51,0,0,0]},{"i":"balmori","n":"Balmori Rooftop","z":"r","t":"b","x":769.0,"y":295.8,"c":1,"f":[80,94,100,92,65,39,0,0,0],"fj":[68,76,73,61,37,22,0,0,0],"fs":[93,98,97,90,67,44,0,0,0]},{"i":"artemisia","n":"Maison Artemisia","z":"r","t":"b","x":687.4,"y":129.1,"c":1,"f":[65,78,74,70,51,36,0,0,0],"fj":[25,27,27,26,17,10,0,0,0],"fs":[65,91,100,87,56,35,0,0,0]},{"i":"o14_elpalenquito","n":"El Palenquito","z":"r","t":"b","x":904.7,"y":182.2,"c":0,"f":[81,92,100,87,63,38,0,0,0],"fj":[53,59,63,62,42,23,0,0,0],"fs":[77,80,84,73,50,28,0,0,0]},{"i":"traspatio","n":"Traspatio","z":"r","t":"b","x":825.3,"y":154.4,"c":1,"f":[90,100,93,86,62,40,0,0,0],"fj":[60,54,47,35,21,10,0,0,0],"fs":[90,88,86,83,64,38,0,0,0]},{"i":"ladina","n":"Ladina Bar","z":"r","t":"b","x":569.9,"y":207.2,"c":1,"f":[65,78,84,76,58,44,0,0,0],"fj":[44,50,47,43,33,23,0,0,0],"fs":[60,85,100,98,73,50,0,0,0]},{"i":"diablo","n":"Diablo Negro Mezcal & Cocktail Bar","z":"r","t":"p","x":653.9,"y":170.7,"c":1,"f":[24,44,63,74,61,47,0,0,0],"fj":[11,13,14,12,9,6,0,0,0],"fs":[27,53,84,100,81,63,0,0,0]},{"i":"departamento","n":"Departamento","z":"r","t":"n","x":737.7,"y":233.3,"c":1,"f":[38,55,71,82,73,64,50,34,0],"fj":[31,40,47,49,39,31,22,0,0],"fs":[42,62,83,100,87,75,57,42,0]},{"i":"oriente","n":"Bar Oriente","z":"r","t":"b","x":628.1,"y":148.0,"c":1,"f":[0,0,62,74,63,54,43,32,0],"fj":[0,0,60,71,54,41,26,18,0],"fs":[0,0,82,100,86,74,56,40,0]},{"i":"mamarumba","n":"Mamá Rumba","z":"r","t":"n","x":640.8,"y":360.3,"c":1,"f":[0,55,80,92,74,56,36,0,0],"fj":[0,50,63,64,46,29,13,0,0],"fs":[0,57,86,100,82,63,41,0,0]},{"i":"o84_oropelvermuteria","n":"Oropel","z":"r","t":"b","x":716.1,"y":258.0,"c":0,"f":[71,87,94,90,0,0,0,0,0],"fj":[54,66,75,69,0,0,0,0,0],"fs":[88,97,100,87,0,0,0,0,0]},{"i":"c_gingin","n":"Gin Gin Condesa","z":"c","t":"b","x":377.1,"y":403.5,"c":1,"f":[71,83,91,89,70,55,37,0,0],"fj":[52,61,61,51,32,21,14,0,0],"fs":[71,88,100,95,70,48,31,0,0]},{"i":"c_cerveceria","n":"La Cervecería de Barrio Condesa","z":"c","t":"b","x":337.4,"y":451.3,"c":1,"f":[73,75,78,72,57,42,0,0,0],"fj":[54,58,57,49,36,0,0,0,0],"fs":[92,85,78,65,51,36,0,0,0]}];
+window.P1_Z = {"roma": {"n": 13, "all": 13, "jue": {"pct": [38, 42, 46, 50, 53, 52, 51, 42, 32, 27, 21, 13, 5, 3, 1, 1, 0], "bpm": [680, 789, 899, 974, 1048, 1023, 999, 835, 671, 558, 446, 295, 145, 86, 26, 13, 0]}, "vie": {"pct": [54, 62, 70, 76, 82, 82, 82, 70, 58, 50, 41, 26, 10, 8, 5, 3, 0], "bpm": [947, 1138, 1328, 1468, 1607, 1631, 1654, 1445, 1236, 1073, 909, 616, 324, 240, 157, 78, 0]}, "sab": {"pct": [58, 67, 75, 84, 92, 93, 93, 80, 66, 57, 47, 30, 12, 9, 6, 3, 0], "bpm": [1040, 1237, 1435, 1620, 1805, 1850, 1895, 1665, 1434, 1246, 1058, 719, 379, 287, 194, 97, 0]}}, "condesa": {"n": 9, "all": 9, "jue": {"pct": [50, 51, 52, 52, 52, 48, 44, 37, 31, 23, 16, 9, 3, 1, 0, 0, 0], "bpm": [536, 548, 560, 557, 553, 505, 457, 391, 325, 238, 150, 92, 34, 17, 0, 0, 0]}, "vie": {"pct": [75, 80, 86, 89, 93, 91, 90, 78, 66, 52, 38, 22, 7, 4, 0, 0, 0], "bpm": [790, 847, 903, 937, 972, 955, 939, 816, 694, 547, 400, 243, 86, 43, 0, 0, 0]}, "sab": {"pct": [71, 76, 81, 83, 86, 83, 80, 70, 60, 49, 37, 22, 7, 3, 0, 0, 0], "bpm": [773, 820, 867, 890, 912, 874, 836, 733, 631, 509, 387, 233, 78, 39, 0, 0, 0]}}};
+window.P1_FEAT = [{"id": "c_wichitos", "z": "condesa", "zone": "Condesa", "name": "Wichitos", "hab": [94, 100, 98, 91, 64, 0, 0, 0, 0], "avg": [56, 54, 50, 44, 26, 0, 0, 0, 0]}, {"id": "departamento", "z": "roma", "zone": "Roma Norte", "name": "Departamento", "hab": [38, 55, 71, 82, 73, 64, 50, 34, 0], "avg": [37, 52, 67, 77, 66, 57, 43, 25, 0]}];
+window.P1_DENS = {"r": {"b": 85, "p": 5, "n": 8}, "c": {"b": 56, "p": 9, "n": 7}};
+window.P1_ND = [{"n":"El Kuchitril","z":"c","x":170.2,"y":536.9},{"n":"Beer Stop Condesa","z":"c","x":222.8,"y":585.5},{"n":"Felina","z":"c","x":350.8,"y":634.1},{"n":"Montejo","z":"c","x":429.0,"y":686.5},{"n":"Los de Frida","z":"c","x":210.9,"y":577.4},{"n":"Michelas","z":"c","x":310.8,"y":562.1},{"n":"La Santi Condesa","z":"c","x":396.9,"y":402.3},{"n":"Peralta","z":"c","x":394.7,"y":402.1},{"n":"Baltra","z":"c","x":516.3,"y":503.4},{"n":"El Centenario","z":"c","x":324.1,"y":444.2},{"n":"La Clandestina","z":"c","x":506.8,"y":278.4},{"n":"Caimán","z":"c","x":401.2,"y":466.1},{"n":"Fünk Club","z":"c","x":559.3,"y":484.9},{"n":"Un Club Bonito","z":"c","x":409.3,"y":415.6},{"n":"Rubí","z":"c","x":549.5,"y":389.9},{"n":"El Espantoso","z":"c","x":278.4,"y":518.1},{"n":"Canopia","z":"c","x":546.3,"y":360.6},{"n":"Necios Mezcalería","z":"c","x":258.0,"y":433.0},{"n":"Trappist, bar à bières","z":"c","x":508.1,"y":282.6},{"n":"Cabuya Rooftop","z":"c","x":511.4,"y":558.1},{"n":"El 98","z":"c","x":308.1,"y":427.5},{"n":"Brujas","z":"r","x":802.3,"y":113.9},{"n":"Bar Mauro","z":"r","x":815.7,"y":171.2},{"n":"686 Bar","z":"r","x":732.2,"y":315.9},{"n":"Supra Roma","z":"r","x":741.1,"y":214.3},{"n":"Gin Gin Roma","z":"r","x":561.6,"y":184.8},{"n":"Loup Bar","z":"r","x":686.1,"y":129.4},{"n":"Café de Nadie","z":"r","x":778.3,"y":239.9},{"n":"Páramo","z":"r","x":711.4,"y":349.3},{"n":"Roca Hi-Fi","z":"r","x":695.2,"y":244.4},{"n":"Salón Palomilla","z":"r","x":715.0,"y":348.3},{"n":"Casa Prunes","z":"r","x":863.9,"y":229.8},{"n":"Morenos Tasting Room Roma","z":"r","x":663.7,"y":412.8},{"n":"Escollo","z":"r","x":714.3,"y":347.5},{"n":"Félix","z":"r","x":870.0,"y":209.7},{"n":"Pulquería La Nuclear","z":"r","x":823.7,"y":321.6},{"n":"Mezontle Roma","z":"r","x":689.6,"y":91.3},{"n":"Japan CDMX","z":"r","x":643.7,"y":133.8},{"n":"Bombay Club Roma","z":"r","x":532.9,"y":257.0},{"n":"Patrick Miller","z":"r","x":827.7,"y":28.2},{"n":"Antro Juan","z":"r","x":535.8,"y":258.1},{"n":"Casa Franca","z":"r","x":872.2,"y":184.8},{"n":"Pulquería Los Insurgentes","z":"r","x":667.9,"y":176.5},{"n":"Salón Covadonga","z":"r","x":782.0,"y":54.3},{"n":"FABA","z":"r","x":662.1,"y":412.7},{"n":"La Champa","z":"r","x":647.9,"y":347.5},{"n":"SOMMA Rooftop","z":"r","x":459.2,"y":198.0},{"n":"Matuche","z":"r","x":784.6,"y":349.4},{"n":"Shhh Condesa","z":"c","x":489.3,"y":335.8},{"n":"NATAS","z":"c","x":288.0,"y":211.5},{"n":"Biberón","z":"r","x":533.5,"y":161.7},{"n":"Hiya Wine Bar","z":"r","x":460.6,"y":158.8},{"n":"Bar Polilla","z":"r","x":633.2,"y":146.4},{"n":"Ololo","z":"c","x":143.7,"y":495.4},{"n":"Hugo El Wine Bar","z":"r","x":317.7,"y":197.7},{"n":"Cantina Monterrey","z":"r","x":696.1,"y":331.1},{"n":"La Barra de al Lado","z":"r","x":316.1,"y":190.6},{"n":"Fantasma","z":"r","x":755.4,"y":26.0},{"n":"La Americana","z":"c","x":509.6,"y":499.6},{"n":"Café Arixi","z":"r","x":906.7,"y":209.5},{"n":"Malcriado Condesa","z":"c","x":296.9,"y":466.4},{"n":"Restaurant Bar Nuevo León","z":"c","x":400.4,"y":432.4},{"n":"Tlachiquero","z":"r","x":976.8,"y":106.8},{"n":"Bijou Drinkery Room","z":"c","x":549.5,"y":389.9},{"n":"El Bar de Vinos Chidos","z":"c","x":276.5,"y":618.4},{"n":"Provocateur Winebar","z":"r","x":386.1,"y":133.7},{"n":"Artic Bar","z":"c","x":418.1,"y":395.8},{"n":"NIV Bar","z":"c","x":302.6,"y":472.4},{"n":"Manarola Wine Shop & Bar","z":"c","x":420.2,"y":558.5},{"n":"Condesa DF Rooftop","z":"r","x":418.7,"y":280.5},{"n":"Black Legend","z":"c","x":336.0,"y":469.4},{"n":"Blanco Colima","z":"r","x":798.5,"y":162.9},{"n":"Madre Rooftop","z":"r","x":802.1,"y":247.1}];
+</script>
+<script>
+(() => {
+  const D = window.PN_DATA, M = D.map, VEN = window.P1_VENUES, Z = window.P1_Z;
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const RM = matchMedia('(prefers-reduced-motion: reduce)');
+  const H = ['20:00','21:00','22:00','23:00','00:00','01:00','02:00','03:00','04:00'];
+  const LIVE = 3, DAYS = { jue: 'jueves', vie: 'viernes', sab: 'sábado' }, D3 = { jue: 'Jue', vie: 'Vie', sab: 'Sáb' };
+  const COL = { r: 'var(--roma)', c: 'var(--cond)' }, HEX = { roma: '#9D70FA', condesa: '#F7468A' };
+  const S = { hour: LIVE, day: 'vie' };
+  $$('[data-zone]').forEach(a => a.addEventListener('click', () => { try { sessionStorage.setItem('pn-zone', a.dataset.zone); } catch (e) {} }));
+
+  /* reloj */
+  const clock = $('#clock');
+  function renderClock(str, anim) { const prev = clock.dataset.s || ''; clock.innerHTML = ''; [...str].forEach((c, i) => { const s = document.createElement('span'); s.className = c === ':' ? 'col' : 'dg'; s.textContent = c; if (anim && c !== ':' && prev[i] !== c && !RM.matches) s.classList.add('roll'); clock.appendChild(s); }); clock.dataset.s = str; }
+
+  /* ---------- mapa ---------- */
+  const svg = $('#map');
+  svg.setAttribute('viewBox', `0 0 ${M.w} ${M.h}`);
+  el('defs', {}, svg).innerHTML = `<filter id="dg" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="4.5"/></filter>
+    <clipPath id="cC">${M.condesaParts.map(d => `<path d="${d}"/>`).join('')}</clipPath><clipPath id="cR"><path d="${M.roma}"/></clipPath>
+    <g id="sts">${['R','W','T','S','P'].filter(k => M.streets[k]).map(k => `<path class="st st-${k}" d="${M.streets[k]}"/>`).join('')}</g>${M.labels.map((l, i) => `<path id="lp${i}" d="${l.d}"/>`).join('')}`;
+  el('rect', { width: M.w, height: M.h, fill: 'var(--map-bg)' }, svg);
+  el('path', { class: 'parks', d: M.parks }, svg);
+  el('use', { href: '#sts', class: 'base', 'stroke-linecap': 'round' }, svg);
+  const zf = {};
+  for (const [z, d, clip] of [['c', M.condesa, 'cC'], ['r', M.roma, 'cR']]) {
+    zf[z] = el('path', { d, class: `zfill-${z}`, 'fill-opacity': .05 }, svg);
+    el('use', { href: '#sts', class: `zst-${z}`, 'clip-path': `url(#${clip})`, 'stroke-linecap': 'round' }, svg);
+    if (z === 'c') el('path', { d: M.condesaInner, class: 'zinner' }, svg);
+    el('path', { d, class: `zline zline-${z}`, pathLength: 1 }, svg);
+  }
+  M.labels.forEach((l, i) => { const t = el('text', { class: 'lbl', dy: -4 }, svg); const tp = el('textPath', { href: `#lp${i}`, startOffset: '50%', 'text-anchor': 'middle' }, t); tp.textContent = l.t; });
+  for (const [t, x, y] of [['CONDESA', 258, 404], ['ROMA NORTE', 790, 386]]) { const e = el('text', { class: 'zl', x, y }, svg); e.textContent = t; }
+  const vg = el('g', {}, svg), dots = [];
+  VEN.forEach((v, i) => {
+    if (window.P1_FEAT.some(f => f.id === v.i)) return;
+    const g = el('g', { class: 'v', transform: `translate(${v.x} ${v.y})` }, vg);
+    const h = el('circle', { class: 'h', r: 6, filter: 'url(#dg)' }, g); h.style.fill = COL[v.z];
+    const c = el('circle', { class: 'c', r: 3 }, g); c.style.fill = COL[v.z];
+    el('circle', { r: 11, fill: 'transparent' }, g);
+    g.addEventListener('pointerenter', e => showTip(g, v)); g.addEventListener('pointerleave', () => tip.classList.remove('on'));
+    if (!RM.matches) { g.style.opacity = 0; g.style.transition = 'opacity .6s'; setTimeout(() => g.style.opacity = 1, 900 + i * 12); }
+    dots.push({ v, h, c });
+  });
+  (window.P1_ND || []).forEach(o => { const g = el('g', { class: 'v nd', transform: `translate(${o.x} ${o.y})` }, vg); const c = el('circle', { r: 2.6, fill: 'none', 'stroke-width': 1.2 }, g); c.style.stroke = COL[o.z]; g.style.opacity = .6; el('circle', { r: 9, fill: 'transparent' }, g); g.addEventListener('pointerenter', () => { tip.innerHTML = '<div class="a"></div><div class="b">Ubicación real · Google no publica su concurrencia</div>'; tip.querySelector('.a').textContent = o.n; tip.classList.add('on'); const fr = mapf.getBoundingClientRect(), r = g.getBoundingClientRect(); tip.style.left = (r.left - fr.left + 14) + 'px'; tip.style.top = Math.max(6, r.top - fr.top - 8) + 'px'; }); g.addEventListener('pointerleave', () => tip.classList.remove('on')); });
+  const FEAT = window.P1_FEAT.map(f => VEN.find(v => v.i === f.id));
+  const pins = FEAT.map((v, k) => {
+    const g = el('g', { class: 'pin', transform: `translate(${v.x} ${v.y})` }, svg);
+    el('circle', { class: 'pulse', r: 9, stroke: HEX[v.z === 'r' ? 'roma' : 'condesa'] }, g);
+    el('circle', { class: 'ring', r: 10 }, g);
+    const d = el('circle', { r: 5 }, g); d.style.fill = COL[v.z];
+    const ch = el('g', { class: 'chip', transform: 'translate(16 -32)' }, g);
+    const txt = `${k + 1} · ${v.n.toUpperCase()}`; el('rect', { width: txt.length * 7.6 + 22, height: 26, rx: 3, stroke: HEX[v.z === 'r' ? 'roma' : 'condesa'] }, ch);
+    const t = el('text', { x: 11, y: 17.5 }, ch); t.textContent = txt;
+    g.addEventListener('pointerenter', () => showTip(g, v)); g.addEventListener('pointerleave', () => tip.classList.remove('on'));
+    return { v, d };
+  });
+  const tip = $('#tip'), mapf = $('#mapf');
+  function showTip(g, v) {
+    const f = v.f[S.hour];
+    tip.innerHTML = `<div class="a"></div><div class="b">${v.z === 'r' ? 'Roma Norte' : 'Condesa'} · ${H[S.hour]} · afluencia ${f}</div>`;
+    tip.querySelector('.a').textContent = v.n;
+    tip.classList.add('on');
+    const fr = mapf.getBoundingClientRect(), r = g.getBoundingClientRect();
+    let x = r.left - fr.left + r.width / 2 + 14, y = r.top - fr.top - 8;
+    if (x + tip.offsetWidth > fr.width - 8) x = r.left - fr.left - tip.offsetWidth - 10;
+    tip.style.left = x + 'px'; tip.style.top = Math.max(6, y) + 'px';
+  }
+  const nR = VEN.filter(v => v.z === 'r').length, nC = VEN.filter(v => v.z === 'c').length;
+  $('#nVen').textContent = `${nR} lugares en Roma Norte y ${nC} en Condesa`;
+  function paintMap() {
+    const i = S.hour;
+    for (const d of dots) { const a = d.v.f[i] / 100; d.c.setAttribute('r', (1.6 + a * 3.4).toFixed(2)); d.c.style.opacity = (.35 + a * .65).toFixed(2); d.h.setAttribute('r', (3 + a * 14).toFixed(1)); d.h.style.opacity = (.1 + a * .6).toFixed(2); }
+    for (const p of pins) p.d.setAttribute('r', (3 + p.v.f[i] / 100 * 4).toFixed(2));
+    zf.r.setAttribute('fill-opacity', (.02 + Z.roma.vie.pct[i * 2] / 100 * .12).toFixed(3));
+    zf.c.setAttribute('fill-opacity', (.02 + Z.condesa.vie.pct[i * 2] / 100 * .12).toFixed(3));
+  }
+  const hours = $('#hours');
+  H.forEach((h, i) => { const b = document.createElement('button'); b.className = 'hr'; b.textContent = h; b.dataset.i = i; b.setAttribute('aria-pressed', 'false'); if (i === LIVE) { const s = document.createElement('span'); s.className = 'lv'; b.appendChild(s); b.setAttribute('aria-label', h + ', dato en vivo'); } b.addEventListener('click', () => { stop(); setHour(i); }); hours.appendChild(b); });
+  let timer = null; const play = $('#play');
+  function stop() { clearInterval(timer); timer = null; play.setAttribute('aria-pressed', 'false'); play.querySelector('.lbl').textContent = 'Ver la noche'; }
+  play.addEventListener('click', () => { if (timer) return stop(); play.setAttribute('aria-pressed', 'true'); play.querySelector('.lbl').textContent = 'Pausar'; if (S.hour >= 8) setHour(0); timer = setInterval(() => { if (S.hour >= 8) return stop(); setHour(S.hour + 1); }, 1100); });
+
+  /* ---------- dos lugares ---------- */
+  const PL = window.P1_FEAT.map(f => ({ id: f.id, z: f.z, zone: f.zone, name: f.name, hab: f.avg, vie: f.hab, live: f.hab[LIVE], zc: f.z === 'roma' ? 'var(--roma)' : 'var(--cond)', zc2: f.z === 'roma' ? 'var(--roma-2)' : 'var(--cond-2)' }));
+  const places = $('#places');
+  PL.forEach((p, k) => {
+    const a = document.createElement('article'); a.className = 'place'; a.style.setProperty('--zc', p.zc); a.style.setProperty('--zc2', p.zc2);
+    a.innerHTML = `<h3 class="zn">${p.zone}</h3><p class="pl">Lugar: <b>${p.name}</b><span class="n">${k + 1}</span></p>
+      <div class="kpi"><div class="main"><div class="k" data-k="a">Afluencia actual</div><div class="v"><span data-v="a">0</span></div></div><div><div class="k">Promedio jue–sáb</div><div class="v"><span data-v="h">0</span></div></div><div class="d"><div class="k">Variación</div><div class="v"><span data-v="d">0</span><small>pts</small></div></div></div>
+      <div class="idx" aria-hidden="true"><i></i><b></b></div><div class="idx-k"><span>0</span><span>Barra: viernes · línea: promedio jue–sáb</span><span>100</span></div>
+      <p class="say"></p>
+      <div class="pop"><div class="pop-h"><span>Horas punta · viernes</span><span>Índice 0–100</span></div><svg viewBox="0 0 440 150" role="img" aria-label="Horas punta de ${p.name} el viernes"></svg></div>`;
+    places.appendChild(a); p.el = a;
+    const sv = a.querySelector('.pop svg'), band = 428 / 9, bw = band * .66, y = v => 118 - v / 100 * 96;
+    el('line', { x1: 6, x2: 434, y1: 118.5, y2: 118.5, stroke: 'var(--line-2)' }, sv);
+    p.bars = p.vie.map((v, i) => { const x = 6 + band * i + (band - bw) / 2; const r = el('rect', { x, y: y(v), width: bw, height: 118 - y(v), rx: 3, fill: p.zc }, sv); r.style.fill = p.zc; const tt = el('title', {}, r); tt.textContent = `${H[i]} · viernes ${v} · promedio jue–sáb ${p.hab[i]}`; r.style.cursor = 'pointer'; r.addEventListener('click', () => { stop(); setHour(i); }); if (i % 2 === 0) { const t = el('text', { class: 'xl', x: x + bw / 2, y: 142, 'data-i': i }, sv); t.textContent = H[i].slice(0, 2) + 'h'; } return r; });
+    const lx = 6 + band * LIVE + (band - bw) / 2;
+    el('line', { x1: lx - 6, x2: lx + bw + 6, y1: y(p.hab[LIVE]), y2: y(p.hab[LIVE]), stroke: 'var(--ink)', 'stroke-width': 2 }, sv);
+    const tg = el('g', { transform: `translate(${lx + bw / 2 - 40} ${y(Math.max(p.live, p.hab[LIVE])) - 22})` }, sv);
+    el('rect', { width: 80, height: 16, rx: 2, fill: 'var(--ink)' }, tg); const tt = el('text', { x: 40, y: 11.5, 'text-anchor': 'middle', 'font-family': 'IBM Plex Mono, monospace', 'font-size': 10, 'font-weight': 500, fill: 'var(--bg)' }, tg); tt.textContent = `${H[LIVE]} · ${p.live}`;
+  });
+  function tween(n, to) { const from = +n.dataset.v || 0; n.dataset.v = to; if (RM.matches) { n.textContent = to; return; } const t0 = performance.now(); const st = t => { const k = Math.min(1, (t - t0) / 520), e = 1 - Math.pow(1 - k, 3); n.textContent = Math.round(from + (to - from) * e); if (k < 1) requestAnimationFrame(st); }; requestAnimationFrame(st); }
+  function paintPlaces() {
+    const i = S.hour, live = i === LIVE;
+    for (const p of PL) {
+      const hab = p.hab[i], a = p.vie[i], d = a - hab, e = p.el;
+      e.querySelector('[data-k="a"]').textContent = `Afluencia · vie ${H[i]}`;
+      tween(e.querySelector('[data-v="a"]'), a); tween(e.querySelector('[data-v="h"]'), hab);
+      e.querySelector('[data-v="d"]').textContent = (d > 0 ? '+' : d < 0 ? '−' : '±') + Math.abs(d);
+      e.querySelector('.idx i').style.width = a + '%'; e.querySelector('.idx b').style.left = hab + '%';
+      const pk = p.vie.indexOf(Math.max(...p.vie));
+      e.querySelector('.say').innerHTML = a === 0 && hab === 0 ? `A las ${H[i]} está cerrado o vacío.` : `${d > 0 ? `<b>${d} puntos más lleno</b> que su promedio de jueves a sábado` : d < 0 ? `<b>${-d} puntos menos lleno</b> que su promedio de jueves a sábado` : 'Igual que su promedio de jueves a sábado'} a las ${H[i]}. El viernes, su pico suele llegar a las ${H[pk]}.`;
+      p.bars.forEach((r, k) => r.setAttribute('fill-opacity', k === i ? 1 : .3));
+      e.querySelectorAll('.xl').forEach(t => t.classList.toggle('on', +t.dataset.i === i));
+    }
+  }
+
+  /* ---------- zonas por hora ---------- */
+  const zc = $('#zchart'); let C, guide;
+  function mono(pts) { const n = pts.length, dx = [], dy = [], m = []; for (let i = 0; i < n - 1; i++) { dx[i] = pts[i + 1][0] - pts[i][0]; dy[i] = (pts[i + 1][1] - pts[i][1]) / dx[i]; } m[0] = dy[0]; m[n - 1] = dy[n - 2]; for (let i = 1; i < n - 1; i++) m[i] = dy[i - 1] * dy[i] <= 0 ? 0 : (dy[i - 1] + dy[i]) / 2; let d = `M${pts[0][0]} ${pts[0][1]}`; for (let i = 0; i < n - 1; i++) { const h = dx[i] / 3; d += ` C${pts[i][0] + h} ${pts[i][1] + m[i] * h} ${pts[i + 1][0] - h} ${pts[i + 1][1] - m[i + 1] * h} ${pts[i + 1][0]} ${pts[i + 1][1]}`; } return d; }
+  function buildZ() {
+    const W = Math.max(300, Math.round(zc.parentElement.clientWidth)), narrow = W < 600, Hh = narrow ? 250 : 300;
+    C = { W, narrow, x0: 40, x1: W - (narrow ? 14 : 100), y0: 44, y1: Hh - 34 };
+    const X = m => C.x0 + m / 480 * (C.x1 - C.x0), Y = p => C.y1 - p / 100 * (C.y1 - C.y0); C.X = X; C.Y = Y;
+    zc.setAttribute('viewBox', `0 0 ${W} ${Hh}`); zc.innerHTML = '';
+    el('defs', {}, zc).innerHTML = Object.entries(HEX).map(([z, c]) => `<linearGradient id="zg-${z}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".22"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient>`).join('');
+    const g = el('g', { class: 'grid' }, zc);
+    for (const t of [0, 25, 50, 75, 100]) { el('line', { x1: C.x0, x2: C.x1, y1: Y(t), y2: Y(t) }, g); const tx = el('text', { x: C.x0 - 8, y: Y(t) + 4, 'text-anchor': 'end' }, g); tx.textContent = t + (t === 100 ? ' %' : ''); }
+    H.forEach((h, i) => { if (narrow && i % 2) return; const t = el('text', { class: 'xl', x: X(i * 60), y: C.y1 + 24, 'data-i': i }, zc); t.textContent = h; });
+    const pk = {};
+    for (const z of ['roma', 'condesa']) {
+      const a = Z[z][S.day].pct, pts = a.map((p, i) => [+X(i * 30).toFixed(1), +Y(p).toFixed(1)]), line = mono(pts);
+      el('path', { d: `${line} L${X(480)} ${C.y1} L${X(0)} ${C.y1} Z`, fill: `url(#zg-${z})` }, zc);
+      const ln = el('path', { class: 'ln', d: line, stroke: HEX[z] }, zc);
+      if (!RM.matches && !buildZ.done) { const L = ln.getTotalLength(); ln.style.strokeDasharray = L; ln.style.strokeDashoffset = L; ln.getBoundingClientRect(); ln.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.3,.6,.2,1)'; requestAnimationFrame(() => ln.style.strokeDashoffset = 0); }
+      let k = 0; a.forEach((v, i) => { if (v > a[k]) k = i; }); pk[z] = { m: k * 30, v: a[k] };
+      const pg = el('g', { class: 'pk' }, zc); el('circle', { cx: X(k * 30), cy: Y(a[k]), r: 6, fill: HEX[z], stroke: 'var(--bg)', 'stroke-width': 2 }, pg);
+      const t = el('text', { x: X(k * 30) + (z === 'roma' ? 10 : -10), y: z === 'roma' ? Y(a[k]) + 24 : Y(a[k]) - 14, 'text-anchor': z === 'roma' ? 'start' : 'end' }, pg); t.textContent = narrow ? fmt(k * 30) : `pico ${fmt(k * 30)} · ${a[k]}`;
+      if (!narrow) { const d = el('text', { class: 'dl', x: X(480) + 10, y: Y(a[a.length - 1]) + (z === 'roma' ? -4 : 14), fill: HEX[z] }, zc); d.textContent = z === 'roma' ? 'Roma Norte' : 'Condesa'; }
+    }
+    guide = el('g', {}, zc);
+    const hit = el('rect', { class: 'hit', x: C.x0, y: C.y0 - 20, width: C.x1 - C.x0, height: C.y1 - C.y0 + 40 }, zc);
+    hit.addEventListener('click', e => { const r = zc.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width * C.W; stop(); setHour(Math.max(0, Math.min(8, Math.round((x - C.x0) / (C.x1 - C.x0) * 8)))); });
+    const r3 = Z.roma[S.day].pct[14], c3 = Z.condesa[S.day].pct[14];
+    $('#zTitle').textContent = `El ${DAYS[S.day]}, Condesa llega a su pico a las ${fmt(pk.condesa.m)} y Roma Norte a las ${fmt(pk.roma.m)}. A las 03:00, Roma Norte conserva un índice de ${r3} y Condesa de ${c3}.`;
+    $('#zCap').textContent = `Actividad de la zona = promedio del índice de concurrencia de Google (0–100) de los lugares con datos (${Z.roma.n} en Roma Norte, ${Z.condesa.n} en Condesa) · Fuente: Google Maps, consultado el 24 oct 2026`;
+    drawGuide(); buildZ.done = true;
+  }
+  function fmt(m) { const h = (20 + Math.floor(m / 60)) % 24; return String(h).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
+  function drawGuide() {
+    if (!guide) return; guide.innerHTML = '';
+    const x = C.X(S.hour * 60); el('line', { class: 'guide', x1: x, x2: x, y1: 26, y2: C.y1 }, guide);
+    const lbl = H[S.hour], w = lbl.length * 7.4 + 14;
+    const g = el('g', { class: 'gt', transform: `translate(${Math.max(C.x0 + w / 2, Math.min(C.x1 - w / 2, x))} 16)` }, guide);
+    el('rect', { x: -w / 2, y: -11, width: w, height: 18, rx: 2 }, g); const t = el('text', { x: 0, y: 2 }, g); t.textContent = lbl;
+    $$('#zchart .xl').forEach(t => t.classList.toggle('on', +t.dataset.i === S.hour));
+  }
+  function days() { const b = $('#days'); b.innerHTML = ''; for (const d of ['jue', 'vie', 'sab']) { const x = document.createElement('button'); x.textContent = D3[d]; x.setAttribute('aria-pressed', S.day === d); x.setAttribute('aria-label', DAYS[d]); x.addEventListener('click', () => { S.day = d; days(); buildZ.done = false; buildZ(); }); b.appendChild(x); } }
+
+  /* ---------- densidad ---------- */
+  const AREA = { r: 2.38, c: 2.16 };
+  const dens = $('#dens'), dz = {};
+  for (const [z, name, zc_, zc2] of [['r', 'Roma Norte', 'var(--roma)', 'var(--roma-2)'], ['c', 'Condesa', 'var(--cond)', 'var(--cond-2)']]) {
+    const DN = window.P1_DENS[z], nn = DN.n, np = DN.p, nb = DN.b, n = nn + np + nb;
+    const vs = [...Array(nb).fill({ t: 'b' }), ...Array(np).fill({ t: 'p' }), ...Array(nn).fill({ t: 'n' })];
+    dz[z] = n / AREA[z];
+    const box = document.createElement('div'); box.className = 'dz'; box.style.setProperty('--zc', zc_); box.style.setProperty('--zc2', zc2);
+    box.innerHTML = `<div class="k">${name}</div><div class="v">${(n / AREA[z]).toFixed(1)}<small>establecimientos / km²</small></div><p class="s">${n} lugares en ${AREA[z].toFixed(2)} km² · ${nb} bares, ${np} pubs, ${nn} antros o clubes</p><div class="dots" aria-hidden="true">${vs.slice().sort((a, b) => 'bpn'.indexOf(a.t) - 'bpn'.indexOf(b.t)).map(v => `<i class="${v.t === 'n' ? 'n' : v.t === 'p' ? 'p' : ''}"></i>`).join('')}</div>`;
+    dens.appendChild(box);
+  }
+  $('#dTitle').textContent = `Roma Norte concentra ${Math.round((dz.r / dz.c - 1) * 100)} % más bares y antros por km² que Condesa.`;
+
+  (function refDate() {
+    const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', hourCycle: 'h23' }).formatToParts(new Date()).map(x => [x.type, x.value]));
+    let d = new Date(Date.UTC(+p.year, +p.month - 1, +p.day)); if (+p.hour < 5) d = new Date(d - 864e5);
+    const f = new Date(+d + ((5 - d.getUTCDay() + 7) % 7) * 864e5), MES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const e = document.getElementById('date'); if (e) e.textContent = `Vie ${f.getUTCDate()} ${MES[f.getUTCMonth()]}`;
+  })();
+  function setHour(i, quiet) {
+    const ch = i !== S.hour; S.hour = i; renderClock(H[i], ch && !quiet);
+    const live = i === LIVE; $('#pill').classList.toggle('hab', !live);
+    $('#pillL1').textContent = `Noche de referencia · viernes ${H[i]}`;
+    $('#pillL2').textContent = 'Google Maps · horarios de mayor concurrencia';
+    $$('.hr').forEach(b => { const on = +b.dataset.i === i; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    paintMap(); paintPlaces(); drawGuide();
+  }
+  renderClock(H[LIVE]); days(); buildZ(); setHour(LIVE, true);
+  let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(buildZ, 150); });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pulso Nocturno · Bitácora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,200;0,300;0,400;0,500;1,300&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: bitácora en retícula de 12 columnas. Apertura con la pregunta crítica; índice; seis capítulos
+   (investigación, semiótica, abducción, escenarios con simulación, proceso, ética); cierre que regresa a 01 y 02. */
+:root{
+  --bg:#050507; --bg-2:#0A090E; --line:#1F1C26; --line-2:#34303D;
+  --ink:#F4F1F8; --ink-2:#BCB6C7; --ink-3:#8C8698;
+  --roma:#9D70FA; --roma-2:#C9B2FF; --cond:#F7468A; --cond-2:#FF9CC2; --warn:#FFB547;
+  --f-display:"Jost","Futura","Avenir Next","Century Gothic",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  color-scheme:dark;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:var(--f-display);font-weight:300;font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+[hidden]{display:none!important}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.kicker{margin:0;font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.grad{background:linear-gradient(90deg,var(--roma-2),var(--cond-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(5,5,7,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:56px}
+.brand{font-family:var(--f-mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2);text-decoration:none;white-space:nowrap}
+.steps{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.steps a{display:flex;align-items:center;gap:8px;padding:8px 12px;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);text-decoration:none;border-bottom:1px solid transparent;white-space:nowrap}
+.steps a b{font-weight:400}.steps a:hover{color:var(--ink)}
+.steps a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--ink)}
+
+/* apertura */
+.open{position:relative;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:56px 40px}
+.open .num{grid-column:1 / span 3;font-weight:200;font-size:clamp(110px,15vw,210px);line-height:.8;color:transparent;-webkit-text-stroke:1px var(--line-2);letter-spacing:-.02em}
+.open .tx{grid-column:4 / span 9}
+.open h1{margin:10px 0 0;font-weight:200;font-size:clamp(46px,7vw,96px);line-height:.95;letter-spacing:.02em;text-transform:uppercase}
+.open h1 span{display:block;animation:rise 1s cubic-bezier(.2,.7,.2,1) both}
+.open h1 .b{animation-delay:.12s}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.open .sub{margin:14px 0 0;font-family:var(--f-mono);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.critical{grid-column:1 / -1;margin:56px 0 0;padding:28px 0 0;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px}
+.critical .kicker{grid-column:1 / span 3}
+.critical p:not(.kicker){grid-column:4 / span 9;margin:0;font-weight:200;font-size:clamp(28px,3.8vw,48px);line-height:1.15;text-wrap:balance}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px}
+.toc a{padding:8px 12px;border:1px solid var(--line-2);font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);text-decoration:none}
+.toc a:hover{border-color:var(--ink);color:var(--ink)}
+.toc a b{font-weight:400;color:var(--ink-3);margin-right:6px}
+
+/* capítulos */
+.ch{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:88px 0;scroll-margin-top:64px}
+.ch > .lab{grid-column:1 / span 3}
+.ch > .body{grid-column:4 / span 9;min-width:0}
+.ch > .wide{grid-column:1 / -1;min-width:0}
+.lab .n{display:block;font-weight:200;font-size:56px;line-height:1;color:var(--ink-3)}
+.lab h2{margin:8px 0 0;font-family:var(--f-mono);font-weight:400;font-size:13px;letter-spacing:.16em;text-transform:uppercase}
+.h{margin:0;font-weight:300;font-size:clamp(28px,3.4vw,42px);line-height:1.15;text-wrap:balance}
+.p{margin:14px 0 0;color:var(--ink-2);max-width:66ch}
+.p b{color:var(--ink);font-weight:400}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:32px;border-top:1px solid var(--line)}
+.grid3 > *{padding:20px 20px 4px 0}
+.grid3 > * + *{padding-left:20px;border-left:1px solid var(--line)}
+.grid3 h3{margin:0 0 8px;font-weight:400;font-size:20px;line-height:1.3}
+.grid3 h3 small{display:block;margin-bottom:6px;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:400}
+.grid3 p{margin:0;color:var(--ink-2);font-size:15px}
+.tbl{width:100%;border-collapse:collapse;margin-top:24px;font-size:15px}
+.tbl th{padding:10px 12px 10px 0;text-align:left;font-family:var(--f-mono);font-weight:400;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+.tbl td{padding:12px 12px 12px 0;vertical-align:top;border-bottom:1px solid var(--line);color:var(--ink-2)}
+.tbl td:first-child{color:var(--ink);font-weight:400}
+.tbl-wrap{overflow-x:auto}
+.finds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:32px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.finds div{padding:18px 18px 18px 0}
+.finds div+div{padding-left:18px;border-left:1px solid var(--line)}
+.finds .v{font-weight:200;font-size:40px;line-height:1.05;font-variant-numeric:tabular-nums}
+.finds .s{font-size:14px;color:var(--ink-2)}
+
+/* semiótica */
+.triad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:32px}
+.sign{padding:22px;border:1px solid var(--line);min-height:230px;display:flex;flex-direction:column}
+.sign .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.sign svg{display:block;width:72px;height:72px;margin:16px 0 12px}
+.sign h3{margin:0;font-weight:400;font-size:20px}
+.sign p{margin:6px 0 0;color:var(--ink-2);font-size:15px}
+.scale{margin-top:40px}
+#tempoScale{display:block;width:100%;height:auto;overflow:visible}
+#tempoScale text{font-family:var(--f-mono);font-size:11px;fill:var(--ink-2)}
+#tempoScale .lbl{fill:var(--ink-3)}
+#tempoScale .term{font-family:var(--f-display);font-style:italic;font-size:14px;fill:var(--ink)}
+#tempoScale .gen{fill:var(--ink)}
+.codes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 40px;margin-top:32px}
+.codes h3{margin:0 0 8px;font-family:var(--f-mono);font-weight:400;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.codes p{margin:0;color:var(--ink-2);font-size:15px}
+.sw{display:flex;gap:8px;margin-top:12px}
+.sw span{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line-2);font-family:var(--f-mono);font-size:11px;color:var(--ink-2)}
+.sw i{width:14px;height:14px;border-radius:50%}
+.typo{margin-top:12px;display:flex;align-items:baseline;gap:20px;flex-wrap:wrap}
+.typo .a{font-weight:200;font-size:44px;line-height:1;letter-spacing:.04em}
+.typo .b{font-family:var(--f-mono);font-size:14px;color:var(--ink-2)}
+
+/* abducción */
+.abd{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:32px;position:relative}
+.abd > div{position:relative;padding:22px;border:1px solid var(--line)}
+.abd > div + div{border-left:0}
+.abd > div + div::before{content:"→";position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:20px;height:20px;display:grid;place-items:center;background:var(--bg);font-family:var(--f-mono);font-size:13px;color:var(--ink-3)}
+.abd .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.abd h3{margin:8px 0 0;font-weight:400;font-size:19px;line-height:1.35}
+.abd p{margin:8px 0 0;color:var(--ink-2);font-size:15px}
+.hyp{margin:40px 0 0;padding:28px;border:1px solid transparent;background:linear-gradient(var(--bg),var(--bg)) padding-box,linear-gradient(90deg,var(--roma),var(--cond)) border-box}
+.hyp .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.hyp p{margin:10px 0 0;font-weight:200;font-size:clamp(22px,2.6vw,32px);line-height:1.35}
+.test{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 40px;margin-top:32px}
+.test h3{margin:0 0 8px;font-family:var(--f-mono);font-weight:400;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.test ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:15px}
+.test li{margin-bottom:6px}
+
+/* escenarios / simulación */
+.sim{margin-top:36px;padding:24px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(10,9,14,.6),rgba(10,9,14,.95))}
+.sim-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px 32px;align-items:end}
+.sim-top h3{margin:6px 0 0;font-weight:300;font-size:clamp(20px,2.2vw,26px);line-height:1.3;text-wrap:balance}
+.ctrl{display:grid;gap:12px;min-width:280px}
+.ctrl label{display:flex;justify-content:space-between;gap:12px;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.ctrl label b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.ctrl input[type=range]{width:100%;accent-color:var(--cond)}
+.toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line-2);font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);text-align:left}
+.toggle i{position:relative;flex:none;width:34px;height:18px;border-radius:999px;background:#26222E;transition:background .25s}
+.toggle i::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--ink-2);transition:transform .25s}
+.toggle[aria-pressed="true"]{border-color:var(--ink);color:var(--ink)}
+.toggle[aria-pressed="true"] i{background:var(--roma)}
+.toggle[aria-pressed="true"] i::after{transform:translateX(16px);background:var(--ink)}
+#simChart{display:block;width:100%;height:auto;margin-top:20px;overflow:visible}
+#simChart .grid line{stroke:var(--line)}
+#simChart text{font-family:var(--f-mono);font-size:11px;fill:var(--ink-3)}
+#simChart .cap100{stroke:var(--ink);stroke-dasharray:4 4;stroke-opacity:.6}
+#simChart .bar{transition:y .5s cubic-bezier(.2,.7,.2,1),height .5s cubic-bezier(.2,.7,.2,1)}
+#simChart .over{fill:var(--warn)}
+.sim-k{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.sim-k i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:18px;border-top:1px solid var(--line)}
+.metrics div{padding:14px 14px 0 0}
+.metrics div+div{padding-left:14px;border-left:1px solid var(--line)}
+.metrics .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.metrics .v{font-weight:200;font-size:36px;line-height:1.1;font-variant-numeric:tabular-nums}
+.metrics .v.warn{color:var(--warn)}
+.scen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}
+.sc{padding:22px;border:1px solid var(--line);transition:border-color .3s,background .3s,opacity .3s;opacity:.55}
+.sc.on{opacity:1;border-color:var(--sc);background:color-mix(in srgb,var(--sc) 8%,transparent)}
+.sc .k{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--sc)}
+.sc .k i{width:8px;height:8px;border-radius:50%;background:var(--sc)}
+.sc h3{margin:10px 0 0;font-weight:400;font-size:19px;line-height:1.35}
+.sc p{margin:8px 0 0;color:var(--ink-2);font-size:15px}
+.fic{margin:28px 0 0;padding:24px 0 0;border-top:1px solid var(--line)}
+.fic .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.fic blockquote{margin:10px 0 0;font-weight:200;font-style:italic;font-size:clamp(20px,2.2vw,27px);line-height:1.45;max-width:46em;color:var(--ink)}
+.fic blockquote.swap{animation:sw .5s cubic-bezier(.2,.7,.2,1)}
+@keyframes sw{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* proceso */
+.proc{list-style:none;margin:32px 0 0;padding:0;position:relative}
+.proc::before{content:"";position:absolute;left:11px;top:6px;bottom:6px;width:1px;background:var(--line-2)}
+.proc li{position:relative;display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 24px;padding:0 0 26px 40px}
+.proc li::before{content:"";position:absolute;left:6px;top:7px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:1.5px solid var(--ink-2)}
+.proc li.key::before{background:linear-gradient(135deg,var(--roma),var(--cond));border:0}
+.proc .st{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding-top:2px}
+.proc h3{margin:0;font-weight:400;font-size:19px}
+.proc p{margin:4px 0 0;color:var(--ink-2);font-size:15px;max-width:62ch}
+.proc .no{display:inline-block;margin-top:8px;padding:2px 8px;border:1px dashed var(--line-2);font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+
+/* ética */
+.eth{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:32px}
+.eth article{padding:22px;border:1px solid var(--line)}
+.eth .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.eth h3{margin:8px 0 0;font-weight:400;font-size:19px;line-height:1.35}
+.eth p{margin:8px 0 0;color:var(--ink-2);font-size:15px}
+.eth .do{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:14px;color:var(--ink)}
+.eth .do b{font-family:var(--f-mono);font-weight:400;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--roma-2);margin-right:6px}
+
+.close{margin-top:110px;padding-block:72px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center}
+.close p{margin:0 auto;max-width:24em;font-weight:200;font-size:clamp(28px,4vw,52px);line-height:1.15;text-wrap:balance}
+.close .s{margin-top:22px;font-size:18px;color:var(--ink-2);max-width:46ch;font-weight:300;line-height:1.55}
+.zbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:32px}
+.zbtn{display:inline-flex;align-items:center;gap:12px;padding:14px 20px;border:1px solid var(--zc);text-decoration:none;font-family:var(--f-mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;transition:background .25s,color .25s}
+.zbtn i{width:9px;height:9px;border-radius:50%;background:var(--zc)}
+.zbtn:hover{background:var(--zc);color:var(--bg)}.zbtn:hover i{background:var(--bg)}
+.foot{padding-block:28px 56px;font-family:var(--f-mono);font-size:11px;color:var(--ink-3);line-height:1.8}
+.foot a{color:var(--ink-2)}
+
+@media (max-width:960px){
+  .open .num{grid-column:1 / -1;font-size:120px}.open .tx,.critical .kicker,.critical p:not(.kicker){grid-column:1 / -1}
+  .critical p:not(.kicker){margin-top:10px}
+  .ch > .lab,.ch > .body{grid-column:1 / -1}.ch > .lab{margin-bottom:16px}
+  .grid3,.triad,.abd,.scen,.eth,.test,.codes{grid-template-columns:1fr}
+  .grid3 > * + *{padding-left:0;border-left:0;border-top:1px solid var(--line)}
+  .abd > div + div{border-left:1px solid var(--line);border-top:0}
+  .abd > div + div::before{content:"↓";left:50%;top:-10px;transform:translateX(-50%)}
+  .finds,.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .finds div:nth-child(3),.metrics div:nth-child(3){padding-left:0;border-left:0}
+  .sim-top{grid-template-columns:1fr}.ctrl{min-width:0}
+  .proc li{grid-template-columns:1fr}
+}
+@media (max-width:560px){.brand{display:none}.topbar .wrap{justify-content:center}.steps a{padding:8px 7px;font-size:11px}.sim{padding:16px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+
+/* ===== ajustes del diseño final ===== */
+.hyp{border:1px solid var(--cond);background:none}
+.eth{grid-column:1 / -1}
+#etica .body{grid-column:4 / span 9}
+#etica .eth-wrap{grid-column:1 / -1;max-width:980px;width:100%;margin:0 auto}
+.close{margin-top:72px}
+.ico{width:54px;margin:0 0 14px}.sci{width:66px;margin:2px 0 14px}
+
+/* ===== ilustraciones animadas ===== */
+.ill{display:block;height:auto;color:var(--ink-2);overflow:visible}
+.ill .fk{fill:var(--ink);stroke:none}.ill .fr{fill:var(--roma);stroke:none}.ill .fc{fill:var(--cond);stroke:none}.ill .fw{fill:var(--warn,#FFB547);stroke:none}.ill .fa{fill:rgb(var(--acc-rgb));stroke:none}.ill .fpark{fill:var(--map-park,#0C1712);stroke:none}
+.ill .k{stroke:var(--ink)}.ill .m{stroke:var(--ink-3)}.ill .d{stroke:var(--line-2)}.ill .r{stroke:var(--roma)}.ill .c{stroke:var(--cond)}.ill .w{stroke:var(--warn,#FFB547)}.ill .a{stroke:rgb(var(--acc-rgb))}
+.ill .dr{stroke-dasharray:1 1;stroke-dashoffset:1}
+.ill.in .dr{animation:ill-draw 1.8s cubic-bezier(.45,.05,.2,1) forwards}
+.ill text,.ill [class^="f"],.ill .glow,.ill .win{opacity:0}
+.ill.in text,.ill.in .glow,.ill.in .win,.ill.in [class^="f"]{animation:ill-fade .8s .9s forwards}
+@keyframes ill-draw{to{stroke-dashoffset:0}}
+@keyframes ill-fade{to{opacity:1}}
+.ill *{transform-box:fill-box}
+.ill [style*="transform-origin"]{transform-box:view-box}
+.ill.on .bob{animation:i-bob 1.1s ease-in-out infinite alternate;transform-origin:50% 100%}
+.ill.on .dance{animation:i-dance .48s ease-in-out infinite alternate;transform-origin:50% 100%}
+.ill.on .idle{animation:i-bob 2.4s ease-in-out infinite alternate;transform-origin:50% 100%}
+.ill.on .wv{animation:i-wave 1.8s ease-out infinite}
+.ill.on .swing{animation:i-swing 1.15s ease-in-out infinite alternate}
+.ill.on .spin{animation:i-spin 3.2s linear infinite}
+.ill.on .float{animation:i-float 3s ease-in-out infinite}
+.ill.on .thump{animation:i-thump .48s ease-out infinite}
+.ill.on .flick{animation:i-flick 5s linear infinite}
+.ill.on .glow{animation:i-glow 2.6s ease-in-out infinite alternate;opacity:1}
+.ill.on .win{animation:i-win 4.2s ease-in-out infinite;opacity:1}
+.ill.on .doorlight{animation:i-win 1.9s ease-in-out infinite}
+.ill.on .run{stroke-dasharray:.06 .94;animation:i-run 3.4s linear infinite;stroke-linecap:round}
+.ill.on .run2{stroke-dasharray:.05 .95;animation:i-run 5.2s linear infinite}
+.ill .run,.ill .run2{stroke-dasharray:0 1}
+.ill.on .walk{animation:i-walk 7s ease-in-out infinite alternate}
+.ill.on .shake{animation:i-shake 2.4s ease-in-out infinite}
+.ill.on .sway{animation:i-sway 3s ease-in-out infinite alternate}
+.ill.on .bounce{animation:i-bounce 1.4s cubic-bezier(.3,.6,.4,1) infinite}
+.ill.on .blink{animation:i-blink 4.5s ease-in-out infinite}
+.ill.on .tilt{animation:i-tilt 3.6s ease-in-out infinite alternate}
+.ill.on .push{animation:i-push 1.6s ease-in-out infinite}
+.ill.on .wander{animation:i-wander 5s ease-in-out infinite}
+.ill.on .hitL{animation:i-hitL .48s ease-in-out infinite}
+.ill.on .hitR{animation:i-hitR .48s ease-in-out infinite .24s}
+.ill.on .dash{animation:i-dash 1.8s linear infinite}
+@keyframes i-bob{to{transform:translateY(-2.5px)}}
+@keyframes i-dance{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-3px) rotate(4deg)}}
+@keyframes i-wave{0%{opacity:.15}35%{opacity:1}100%{opacity:.15}}
+@keyframes i-swing{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
+@keyframes i-spin{to{transform:rotate(360deg)}}
+@keyframes i-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes i-thump{0%{transform:scale(1.07)}100%{transform:scale(1)}}
+@keyframes i-flick{0%,18%,22%,24%,60%,100%{opacity:1}20%,23%{opacity:.25}61%{opacity:.5}}
+@keyframes i-glow{from{opacity:.45}to{opacity:1}}
+@keyframes i-win{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes i-run{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes i-walk{from{transform:translateX(-10px)}to{transform:translateX(8px)}}
+@keyframes i-shake{0%,70%,100%{transform:rotate(0)}75%{transform:rotate(-4deg)}85%{transform:rotate(4deg)}}
+@keyframes i-sway{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+@keyframes i-bounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+@keyframes i-blink{0%,44%,50%,100%{transform:scaleY(1)}47%{transform:scaleY(.1)}}
+@keyframes i-tilt{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+@keyframes i-push{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+@keyframes i-wander{0%,100%{transform:translate(0,0)}33%{transform:translate(3px,-2px)}66%{transform:translate(-2px,2px)}}
+@keyframes i-hitL{0%,100%{transform:rotate(0)}50%{transform:rotate(12deg)}}
+@keyframes i-hitR{0%,100%{transform:rotate(0)}50%{transform:rotate(-12deg)}}
+@keyframes i-dash{to{stroke-dashoffset:-12}}
+@media (prefers-reduced-motion:reduce){.ill .dr{stroke-dasharray:none;stroke-dashoffset:0}.ill text,.ill [class^="f"],.ill .glow,.ill .win{opacity:1}.ill *{animation:none!important}}
+
+/* ===== fondo en movimiento y apariciones ===== */
+#bgfx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
+main,.topbar,footer{position:relative;z-index:1}
+.topbar{z-index:20}
+.rv{opacity:0;transform:translateY(26px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--rd,0) * 95ms)}
+.rv.rv-l{transform:translateX(-26px)}
+.rv.rv-s{transform:scale(.97)}
+.rv.in{opacity:1;transform:none}
+.rv-line{display:block;overflow:hidden}
+.rule-rv{position:relative}
+.rule-rv::after{content:"";position:absolute;left:0;top:-1px;height:1px;width:100%;background:currentColor;transform-origin:left;transform:scaleX(0);transition:transform 1.4s cubic-bezier(.3,.6,.2,1)}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}#bgfx{display:none}}
+
+/* ---- ajustes de diseño ---- */
+
+.finds > div > div,.metrics > div > div{padding:0;border:0}
+.finds .s{margin-top:8px}
+#etica .eth-wrap{grid-column:4 / span 9;max-width:none;margin:0}
+@media (max-width:960px){#etica .eth-wrap{grid-column:1 / -1}}
+
+
+/* ---- ajustes de diseño ---- */
+
+.ch > .wide{grid-column:4 / span 9}
+@media (max-width:960px){.ch > .wide{grid-column:1 / -1}}
+.sc{opacity:.7;background:transparent}
+.sc.on{background:transparent}
+.hyp{background:none;border:1px solid;border-image:linear-gradient(90deg,var(--roma),var(--cond)) 1}
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">Pulso Nocturno</a>
+    <nav class="steps" aria-label="Pantallas">
+      <a href="index.html"><b>01</b>Entender</a>
+      <a href="explorar.html"><b>02</b>Experimentar</a>
+      <a href="bitacora.html" aria-current="page"><b>03</b>Reflexionar</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="open" aria-labelledby="t3">
+    <div class="num" aria-hidden="true">03</div>
+    <div class="tx">
+      <p class="kicker">Reflexionar · proceso conceptual</p>
+      <h1 id="t3"><span>Bitácora</span></h1>
+      <p class="sub">Ficción prospectiva sobre el ritmo de la noche</p>
+      <nav class="toc" aria-label="Capítulos">
+        <a href="#investigacion"><b>01</b>Investigación</a><a href="#semiotica"><b>02</b>Lectura semiótica</a><a href="#hipotesis"><b>03</b>Hipótesis abductiva</a><a href="#escenarios"><b>04</b>Escenarios posibles</a><a href="#proceso"><b>05</b>Proceso creativo</a><a href="#etica"><b>06</b>Reflexión ética</a>
+      </nav>
+    </div>
+    <div class="critical"><p class="kicker">Pregunta crítica</p><p>¿Qué ocurre cuando hacemos visible el ritmo de la noche y las personas comienzan a decidir a dónde ir basándose en él?</p></div>
+  </section>
+
+  <!-- 01 INVESTIGACIÓN -->
+  <section class="ch" id="investigacion" aria-labelledby="c1">
+    <div class="lab"><span class="n">01</span><h2 id="c1">Investigación</h2></div>
+    <div class="body">
+      <p class="h">Partimos de una pregunta de diseño y de un fenómeno que se repite cada fin de semana.</p>
+      <p class="p"><b>Pregunta de investigación:</b> ¿cómo puede el diseño de experiencia representar la afluencia y actividad nocturna de Roma Norte y Condesa para visualizar cómo cambia la intensidad de la fiesta conforme avanza la noche?</p>
+      <p class="p"><b>Fenómeno:</b> la vida nocturna de la CDMX cambia conforme avanza la noche. Algunas zonas comienzan con poca actividad, aumentan su afluencia, alcanzan un punto máximo y después disminuyen.</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Fuente</th><th>Qué aporta</th><th>Uso en el proyecto</th></tr></thead>
+          <tbody>
+            <tr><td>Google Maps</td><td>Horarios populares, afluencia en vivo y ubicación de establecimientos.</td><td>Índice de concurrencia por hora (0–100), horario y ubicación exacta de cada lugar. Consultado el 24 oct 2026.</td></tr>
+            <tr><td>DENUE · INEGI</td><td>Identificación y verificación de bares, cantinas y centros nocturnos.</td><td>Fuente propuesta para verificar el conteo por zona.</td></tr>
+            <tr><td>OpenStreetMap</td><td>Calles, parques y 139 bares, pubs y antros con nombre en la zona.</td><td>Mapa base real y ubicación de la mayoría de los lugares.</td></tr>
+            <tr><td>SEPOMEX</td><td>Polígonos de las colonias por código postal.</td><td>Límites de Roma Norte y Condesa; superficie para calcular la densidad.</td></tr>
+            <tr><td>Guías y fichas 2026</td><td>Antreando, Casa Goliana, TopExplora, Chilango, Time Out, CDMX365, Yelp.</td><td>Confirmar que la lista curada sigue activa, con dirección y horario.</td></tr>
+            <tr><td>Contexto urbano</td><td>Historia de las colonias, renta corta, marcha contra la gentrificación (2025).</td><td>Lectura social y ética del fenómeno.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="finds">
+        <div><div class="v">22:00</div><div class="s">pico de Condesa el viernes</div></div>
+        <div><div class="v">22:00</div><div class="s">pico de Roma Norte, a la misma hora</div></div>
+        <div><div class="v">41 / 33</div><div class="s">establecimientos por km² en Roma Norte y Condesa</div></div>
+        <div><div class="v">22</div><div class="s">lugares con horarios de concurrencia de Google (13 + 9)</div></div>
+      </div>
+      <p class="p">Límite principal: Google no publica cuántas personas hay ni permite descargar sus horarios de mayor concurrencia. Por eso los datos se consultaron uno por uno en Google Maps (24 de octubre de 2026) y un aforo de referencia estimado convierte el índice en personas.</p>
+    </div>
+  </section>
+
+  <!-- 02 SEMIÓTICA -->
+  <section class="ch" id="semiotica" aria-labelledby="c2">
+    <div class="lab"><span class="n">02</span><h2 id="c2">Lectura semiótica</h2></div>
+    <div class="body">
+      <p class="h">El metrónomo funciona en tres niveles de signo: se parece, señala y significa.</p>
+      <p class="p">Siguiendo la tríada de Peirce, cada elemento visual del proyecto se eligió por cómo produce sentido, no solo por cómo se ve.</p>
+      <div class="triad">
+        <div class="sign"><span class="k">Ícono · se parece</span>
+          <svg viewBox="0 0 72 72" aria-hidden="true"><path d="M14 66h44L46 8H26z" fill="none" stroke="#BCB6C7" stroke-width="1.5"/><line x1="36" y1="60" x2="48" y2="12" stroke="#9D70FA" stroke-width="2.5" stroke-linecap="round"/><rect x="38" y="30" width="10" height="7" rx="2" fill="#9D70FA" transform="rotate(14 43 33)"/></svg>
+          <h3>El metrónomo y los puntos</h3><p>El instrumento dibujado y la sala de puntos se parecen a lo que representan: un aparato que marca tiempo y un espacio que se llena de personas.</p></div>
+        <div class="sign"><span class="k">Índice · señala</span>
+          <svg viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="24" fill="#F7468A" fill-opacity=".14"/><circle cx="36" cy="36" r="14" fill="#F7468A" fill-opacity=".3"/><circle cx="36" cy="36" r="5" fill="#F7468A"/></svg>
+          <h3>La afluencia y el brillo</h3><p>El dato de afluencia es una huella de cuerpos presentes. El brillo de cada punto en el mapa señala esa presencia: donde hay luz, hay gente.</p></div>
+        <div class="sign"><span class="k">Símbolo · significa</span>
+          <svg viewBox="0 0 72 72" aria-hidden="true"><text x="36" y="44" text-anchor="middle" font-family="Jost,sans-serif" font-style="italic" font-size="17" fill="#F4F1F8">Presto</text><line x1="10" y1="54" x2="62" y2="54" stroke="#34303D"/></svg>
+          <h3>El tempo y los BPM</h3><p>Los términos de tempo (largo, andante, allegro, presto) y los BPM son convenciones musicales: las entendemos por cultura, no por parecido. Traducen intensidad en velocidad.</p></div>
+      </div>
+      <figure class="scale" style="margin-left:0;margin-right:0">
+        <p class="kicker">El código del tempo · BPM, términos musicales y géneros de la noche</p>
+        <svg id="tempoScale" role="img" aria-label="Escala de 0 a 240 BPM con los términos de tempo, rangos aproximados de géneros y dónde caen Los de Frida y Mezontle el viernes a las 23:00"></svg>
+      </figure>
+      <div class="codes">
+        <div><h3>Color</h3><p>Violeta para Roma Norte y rosa para Condesa: luces de neón, la noche artificial. Son dos tonos del mismo sistema y ninguno significa «mejor» o «peor»; por eso no usamos rojo y verde.</p><div class="sw"><span><i style="background:#9D70FA"></i>Roma Norte</span><span><i style="background:#F7468A"></i>Condesa</span><span><i style="background:#050507;border:1px solid #34303D"></i>Noche</span></div></div>
+        <div><h3>Tipografía</h3><p>Una sans geométrica de trazo fino, heredera de las tipografías modernas de los años veinte, la década del art déco de la Condesa. La monoespaciada lee el dato como un instrumento de medición.</p><div class="typo"><span class="a">Pulso</span><span class="b">23:00 · 163 BPM</span></div></div>
+        <div><h3>Sonido</h3><p>El pulso suena como un bombo: el golpe grave que organiza una pista de baile. Cada cuatro golpes hay un acento, como en un compás.</p></div>
+        <div><h3>Fondo y luz</h3><p>Fondo casi negro y elementos que brillan: la ciudad se lee como desde arriba, de noche, donde solo se ve lo que está encendido.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 HIPÓTESIS -->
+  <section class="ch" id="hipotesis" aria-labelledby="c3">
+    <div class="lab"><span class="n">03</span><h2 id="c3">Hipótesis abductiva</h2></div>
+    <div class="body">
+      <p class="h">La abducción parte de un hecho sorprendente y propone la explicación que lo volvería natural.</p>
+      <div class="abd">
+        <div><svg class="ill ico" viewBox="0 0 60 46" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><g class="blink" style="transform-origin:24px 22px"><path class="k dr" d="M4 22 C12 10 36 10 44 22 C36 34 12 34 4 22 Z" pathLength="1"/><circle class="k dr" cx="24" cy="22" r="7" pathLength="1"/><circle class="fc" cx="24" cy="22" r="2.6"/></g><g class="flick"><path class="c dr" stroke-width="2.4" d="M52 6 V24 M52 31 v.5" pathLength="1"/></g></svg><span class="k">Hecho sorprendente</span><h3>Dos colonias vecinas no llegan a su punto máximo a la misma hora.</h3><p>Comparten calles y público, pero Condesa se enciende antes y Roma Norte se sostiene hasta más tarde.</p></div>
+        <div><svg class="ill ico" viewBox="0 0 60 46" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="k dr" d="M10 42 L18 6 H30 L38 42 Z M6 42 H42" pathLength="1"/><g class="swing" style="transform-origin:24px 38px"><path class="r dr" stroke-width="2" d="M24 38 L24 8" pathLength="1"/><rect class="fr" x="21" y="16" width="7" height="5" rx="1"/></g></svg><span class="k">Regla supuesta</span><h3>La noche funciona como un metrónomo cuyo ritmo cambia según la intensidad de la fiesta.</h3><p>Si eso es cierto, cada zona tendría su propio tempo, y el desfase sería lo esperable.</p></div>
+        <div><svg class="ill ico" viewBox="0 0 60 46" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="k dr" d="M18 38 C10 38 8 30 10 26 C6 14 14 4 24 4 C34 4 40 12 38 22 C36 30 28 30 28 36 C28 40 24 42 20 40" pathLength="1"/><path class="m dr" d="M18 20 C18 14 28 12 30 20 C30 26 24 26 24 30" pathLength="1"/><path class="r wv dr" style="animation-delay:0.00s" d="M44 14 a8 8 0 0 1 0 16" pathLength="1"/><path class="r wv dr" style="animation-delay:0.22s" d="M44 8 a14 14 0 0 1 0 28" pathLength="1"/></svg><span class="k">Caso a probar</span><h3>Si la afluencia se escucha como tempo, las personas percibirán la diferencia.</h3><p>El prototipo de la pantalla 02 es la prueba: la diferencia se oye, no solo se lee.</p></div>
+      </div>
+      <div class="hyp"><span class="k">Hipótesis</span><p>Si representamos la afluencia y actividad nocturna como el ritmo de un metrónomo que acelera o desacelera, entonces las personas podrían percibir cómo cambia la intensidad de la fiesta en distintas zonas de la CDMX conforme avanza la noche.</p></div>
+      <div class="test">
+        <div><h3>Cómo la pusimos a prueba</h3><ul><li>Regla literal: 1 persona dentro = 1 BPM, para que el ritmo no requiera explicación.</li><li>Un lugar a la vez, con su aforo, para que el pulso tenga un origen concreto.</li><li>Recorrido de 20:00 a 04:00 con sonido: la aceleración se escucha en minutos.</li><li>Dos zonas con paletas distintas para comparar ritmos.</li></ul></div>
+        <div><h3>Qué podría refutarla</h3><ul><li>Que el sonido distraiga en lugar de explicar: por eso empieza apagado.</li><li>Que a muchos BPM el pulso se vuelva ruido y deje de leerse como ritmo.</li><li>Que la diferencia entre zonas sea menor a la que el oído distingue.</li><li>Que la metáfora sustituya al dato: por eso la pantalla 01 va primero.</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 ESCENARIOS -->
+  <section class="ch" id="escenarios" aria-labelledby="c4">
+    <div class="lab"><span class="n">04</span><h2 id="c4">Escenarios posibles</h2></div>
+    <div class="body">
+      <p class="h">Ficción prospectiva: ¿qué pasa si la gente decide a dónde ir con Pulso Nocturno?</p>
+      <p class="p" hidden>Esta simulación toma los 41 lugares de la lista curada un viernes a las 23:00. Una parte de las personas deja su lugar y se mueve según lo que muestra la visualización. Mueve el control y observa cómo cambia la noche.</p>
+    </div>
+    <div class="wide">
+      <div class="sim" hidden>
+        <div class="sim-top">
+          <div><p class="kicker">Simulación · viernes 23:00 · 41 lugares</p><h3 id="simTitle"></h3></div>
+          <div class="ctrl">
+            <label for="adopt">Personas que siguen la app <b id="adoptV">0 %</b></label>
+            <input id="adopt" type="range" min="0" max="60" step="1" value="0">
+            <button class="toggle" id="resp" aria-pressed="false"><i></i>Diseño responsable: sugerir lugares con espacio</button>
+          </div>
+        </div>
+        <svg id="simChart" role="img" aria-label="Ocupación de cada lugar respecto a su aforo"></svg>
+        <div class="sim-k"><span><i style="background:var(--roma)"></i>Roma Norte</span><span><i style="background:var(--cond)"></i>Condesa</span><span><i style="background:var(--warn)"></i>Exceso sobre el aforo (fila en la puerta)</span><span>Línea punteada: 100 % del aforo</span></div>
+        <div class="metrics">
+          <div><div class="k">Lugares saturados</div><div class="v" id="mSat">0</div></div>
+          <div><div class="k">Personas en fila</div><div class="v" id="mQ">0</div></div>
+          <div><div class="k">Gente en los 5 más llenos</div><div class="v" id="mTop">0 %</div></div>
+          <div><div class="k">Lugares casi vacíos</div><div class="v" id="mEmpty">0</div></div>
+        </div>
+      </div>
+      <div class="scen">
+        <article class="sc" id="scP" style="--sc:#BCB6C7"><svg class="ill sci" viewBox="0 0 66 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect class="k dr" x="20" y="2" width="26" height="42" rx="4" pathLength="1"/><path class="d dr" d="M24 10 H42 V34 H24 Z M24 18 L42 26 M30 10 L36 34" pathLength="1"/><g class="bounce"><path class="m dr" d="M33 32 C33 32 28 26 28 23 a5 5 0 0 1 10 0 C38 26 33 32 33 32 Z" pathLength="1"/></g><path class="m dr" d="M30 39 h6" pathLength="1"/><g class="m idle"><circle class="dr" cx="56" cy="26" r="3.6" pathLength="1"/><path class="dr" d="M56 30 V35.2 M51 44 L56 35.2 L61 44 M50 34.8 L56 36 L62 34.8" pathLength="1"/></g><g class="d idle" style="animation-delay:0.6s"><circle class="dr" cx="8" cy="26" r="3.6" pathLength="1"/><path class="dr" d="M8 30 V35.2 M3 44 L8 35.2 L13 44 M2 34.8 L8 36 L14 34.8" pathLength="1"/></g></svg><span class="k"><i></i>Escenario probable</span><h3>Se usa para mirar, no para decidir.</h3><p>Las personas consultan qué tan activa está cada zona y comparan Roma Norte y Condesa. Entienden la noche sin necesariamente cambiar a dónde salen.</p></article>
+        <article class="sc" id="scU" style="--sc:var(--roma)"><svg class="ill sci" viewBox="0 0 66 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="k dr" d="M32 4 V40 M20 44 H44" pathLength="1"/><g class="tilt" style="transform-origin:32px 12px"><path class="k dr" d="M8 12 H56" pathLength="1"/><path class="r dr" d="M8 12 L2 26 M8 12 L14 26 M2 26 A6 4 0 0 0 14 26 Z" pathLength="1"/><path class="c dr" d="M56 12 L50 26 M56 12 L62 26 M50 26 A6 4 0 0 0 62 26 Z" pathLength="1"/></g><circle class="k dr" cx="32" cy="4" r="2" pathLength="1"/></svg><span class="k"><i></i>Escenario utópico</span><h3>La visualización reparte la noche.</h3><p>Las personas comprenden fácilmente cómo cambia la actividad e identifican qué zonas tienen mayor o menor intensidad. Si el diseño sugiere lugares con espacio, la fiesta se distribuye.</p></article>
+        <article class="sc" id="scD" style="--sc:var(--warn)"><svg class="ill sci" viewBox="0 0 66 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="k dr" d="M4 44 V8 H22 V44" pathLength="1"/><rect class="fw win" x="4" y="8" width="18" height="36" fill-opacity=".15"/><path class="w dr" d="M2 4 H24" pathLength="1"/><g class="w bob"><circle class="dr" cx="30" cy="28" r="3.6" pathLength="1"/><path class="dr" d="M30 32 V36.0 M25 44 L30 36.0 L35 44 M24 35.6 L30 38 L36 35.6" pathLength="1"/></g><g class="w bob" style="animation-delay:0.15s"><circle class="dr" cx="38" cy="28" r="3.6" pathLength="1"/><path class="dr" d="M38 32 V36.0 M33 44 L38 36.0 L43 44 M32 35.6 L38 38 L44 35.6" pathLength="1"/></g><g class="w bob" style="animation-delay:0.3s"><circle class="dr" cx="46" cy="28" r="3.6" pathLength="1"/><path class="dr" d="M46 32 V36.0 M41 44 L46 36.0 L51 44 M40 35.6 L46 38 L52 35.6" pathLength="1"/></g><g class="w bob" style="animation-delay:0.44999999999999996s"><circle class="dr" cx="54" cy="28" r="3.6" pathLength="1"/><path class="dr" d="M54 32 V36.0 M49 44 L54 36.0 L59 44 M48 35.6 L54 38 L60 35.6" pathLength="1"/></g><g class="w bob" style="animation-delay:0.6s"><circle class="dr" cx="62" cy="28" r="3.6" pathLength="1"/><path class="dr" d="M62 32 V36.0 M57 44 L62 36.0 L67 44 M56 35.6 L62 38 L68 35.6" pathLength="1"/></g></svg><span class="k"><i></i>Escenario distópico</span><h3>El ritmo rápido atrae más ritmo.</h3><p>Las personas se concentran en las zonas que aparecen como más activas. El ritmo acelerado atrae a más gente, satura los mismos puntos y modifica los datos que se estaban representando.</p></article>
+      </div>
+      <div class="fic"><p class="kicker" id="ficK">Ficción · viernes 15 de octubre de 2027, 23:40</p><blockquote id="fic"></blockquote></div>
+    </div>
+  </section>
+
+  <!-- 05 PROCESO -->
+  <section class="ch" id="proceso" aria-labelledby="c5">
+    <div class="lab"><span class="n">05</span><h2 id="c5">Proceso creativo</h2></div>
+    <div class="body">
+      <p class="h">Del dato al ritmo: lo que se decidió, lo que se descartó y por qué.</p>
+      <ol class="proc">
+        <li><span class="st">Fenómeno</span><div><h3>Pregunta, fenómeno y datos</h3><p>Se definió el fenómeno (la noche cambia por hora) y los tres datos: afluencia, actividad de la zona y ubicación de bares y antros.</p></div></li>
+        <li class="key"><span class="st">Metáfora</span><div><h3>El metrónomo</h3><p>La noche como un ritmo que acelera o desacelera. Concepto rector: «Cada noche tiene su ritmo». La metáfora no reemplaza al dato: primero se entiende, después se siente.</p></div></li>
+        <li><span class="st">Boceto</span><div><h3>Pantalla 1 en papel digital</h3><p>Mapa oscuro con dos zonas iluminadas, reloj, aviso de datos en tiempo real y una columna por zona con sus horas punta.</p></div></li>
+        <li><span class="st">Prototipo</span><div><h3>Calles reales</h3><p>El mapa se dibuja con las calles de OpenStreetMap y los polígonos de SEPOMEX, con la piel visual del proyecto.</p><span class="no">Descartado: incrustar Google Maps, que la página no permite cargar</span></div></li>
+        <li class="key"><span class="st">Decisión</span><div><h3>1 persona = 1 BPM</h3><p>La primera escala traducía niveles de actividad a rangos de BPM. Se cambió por una regla literal: más directa, sin tabla que memorizar, y con un aforo que convierte el índice en personas.</p><span class="no">Descartado: escala por niveles (40–180 BPM)</span></div></li>
+        <li><span class="st">Experiencia</span><div><h3>Un lugar a la vez</h3><p>La sala que se llena punto por punto, el pulso sonoro, el recorrido de la noche y el buscador sobre el mapa.</p><span class="no">Descartado: un tablero de tarjetas con cifras</span></div></li>
+        <li><span class="st">Datos 2026</span><div><h3>Listas curadas y dos paletas</h3><p>13 lugares en Roma Norte y 9 en Condesa con datos de Google Maps: ubicación exacta, horario y horarios de mayor concurrencia. Violeta y rosa para distinguir las zonas.</p></div></li>
+        <li class="key"><span class="st">Reflexión</span><div><h3>Esta bitácora</h3><p>Lectura semiótica, hipótesis, escenarios y ética: el proyecto se pregunta qué produce al hacerse visible.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 06 ÉTICA -->
+  <section class="ch" id="etica" aria-labelledby="c6">
+    <div class="lab"><span class="n">06</span><h2 id="c6">Reflexión ética</h2></div>
+    <div class="body">
+      <p class="h">Visualizar la noche no es neutral: puede repartirla o saturarla.</p>
+      <p class="p">El escenario distópico muestra el riesgo central del proyecto: una visualización que influye en las decisiones cambia el fenómeno que mide. Estas son las tensiones y lo que el diseño hace con ellas.</p>
+    </div>
+    <div class="eth-wrap">
+      <div class="eth">
+        <article><svg class="ill ico" viewBox="0 0 60 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><g class="blink" style="transform-origin:24px 22px"><path class="k dr" d="M4 22 C12 10 36 10 44 22 C36 34 12 34 4 22 Z" pathLength="1"/><circle class="k dr" cx="24" cy="22" r="7" pathLength="1"/></g><path class="c dr" stroke-width="2" d="M8 38 L42 6" pathLength="1"/></svg><span class="k">Privacidad</span><h3>Contar personas sin seguir a nadie</h3><p>La afluencia de Google se calcula con datos agregados y anónimos de quienes activaron su historial de ubicación.</p><p class="do"><b>Decisión</b>Solo cifras por lugar y por hora; nunca trayectorias ni personas.</p></article>
+        <article><svg class="ill ico" viewBox="0 0 60 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><g class="spin" style="transform-origin:24px 22px"><path class="k dr" d="M12 22 A14 14 0 0 1 38 14" pathLength="1"/><path class="k dr" d="M36 22 A14 14 0 0 1 10 30" pathLength="1"/><path class="c dr" d="M38 6 V15 H29 M10 38 V29 H19" pathLength="1"/></g><circle class="fc glow" cx="24" cy="22" r="3"/></svg><span class="k">Saturación</span><h3>El bucle de retroalimentación</h3><p>Mostrar dónde está «lo más lleno» puede llenar todavía más esos lugares y vaciar los demás.</p><p class="do"><b>Decisión</b>Ningún ranking de «lo más prendido»; la lista ordena por la selección curada, no por ocupación.</p></article>
+        <article><svg class="ill ico" viewBox="0 0 60 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="k dr" d="M6 40 V22 L20 10 L34 22 V40 Z" pathLength="1"/><path class="m dr" d="M16 40 V30 h8 v10" pathLength="1"/><g class="push"><path class="c dr" d="M38 26 H54 M48 20 l6 6 l-6 6" pathLength="1"/></g></svg><span class="k">Gentrificación</span><h3>La fiesta también desplaza</h3><p>Roma Norte y Condesa viven alza de rentas, renta corta y conflictos por ruido. Atraer más visitantes puede profundizarlo.</p><p class="do"><b>Decisión</b>Contexto urbano explícito en la pantalla 01, no solo la fiesta.</p></article>
+        <article><svg class="ill ico" viewBox="0 0 60 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><g class="wander"><circle class="k dr" cx="20" cy="20" r="13" pathLength="1"/><path class="k dr" stroke-width="2.4" d="M30 30 L44 44" pathLength="1"/><path class="r dr" d="M13 22 l4 4 l9 -10" pathLength="1"/></g></svg><span class="k">Transparencia</span><h3>Decir qué es real</h3><p>La concurrencia y las ubicaciones vienen de Google Maps; el aforo es una referencia estimada para convertir el índice en personas. Donde Google no publica concurrencia, la curva es ficticia y el lugar se marca «estimado».</p><p class="do"><b>Decisión</b>Cada ficha y cada gráfica dice su fuente y si el dato es simulado.</p></article>
+        <article><svg class="ill ico" viewBox="0 0 60 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><g class="m bob"><circle class="dr" cx="10" cy="22" r="3.6" pathLength="1"/><path class="dr" d="M10 26 V33.6 M5 44 L10 33.6 L15 44 M4 33.1 L10 32 L16 33.1" pathLength="1"/></g><g class="k bob" style="animation-delay:0.2s"><circle class="dr" cx="24" cy="18" r="3.6" pathLength="1"/><path class="dr" d="M24 22 V32.0 M19 44 L24 32.0 L29 44 M18 31.4 L24 28 L30 31.4" pathLength="1"/></g><g class="m bob" style="animation-delay:0.4s"><circle class="dr" cx="38" cy="22" r="3.6" pathLength="1"/><path class="dr" d="M38 26 V33.6 M33 44 L38 33.6 L43 44 M32 33.1 L38 32 L44 33.1" pathLength="1"/></g><g class="flick"><path class="c dr" d="M44 14 l8 8 M52 14 l-8 8" pathLength="1"/></g></svg><span class="k">Inclusión</span><h3>Quién no aparece</h3><p>Fiestas en casas, sonideros, cantinas sin ficha en Google y espacios que prefieren no ser visibles quedan fuera del dato.</p><p class="do"><b>Decisión</b>Nombrar el sesgo: el mapa muestra la noche comercial registrada, no toda la noche.</p></article>
+        <article><svg class="ill ico" viewBox="0 0 60 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="k dr" d="M18 38 C10 38 8 30 10 26 C6 14 14 4 24 4 C34 4 40 12 38 22 C36 30 28 30 28 36 C28 40 24 42 20 40" pathLength="1"/><path class="r wv dr" style="animation-delay:0.00s" d="M44 14 a8 8 0 0 1 0 16" pathLength="1"/><path class="r wv dr" style="animation-delay:0.22s" d="M44 8 a14 14 0 0 1 0 28" pathLength="1"/><path class="c dash dr" stroke-dasharray="1 5" stroke-width="2" d="M4 46 H56" pathLength="1"/></svg><span class="k">Accesibilidad</span><h3>Ritmo para todos los sentidos</h3><p>El pulso se ve, se escucha y se lee como texto. El movimiento respeta la preferencia de reducirlo.</p><p class="do"><b>Decisión</b>Sonido apagado por defecto y descripción de cada cambio para lectores de pantalla.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="close" aria-label="Cierre">
+    <p>La ciudad no tiene un solo ritmo. Cada zona, cada hora y cada noche producen una forma distinta de vivir la CDMX.</p>
+    <p class="s">Hacer visible ese ritmo es útil mientras ayude a entender la noche y no a saturarla. Pulso Nocturno propone escucharla antes de decidir.</p>
+    <div class="zbtns">
+      <a class="zbtn" style="--zc:var(--ink-2)" href="index.html"><i></i>01 · Entender</a>
+      <a class="zbtn" style="--zc:var(--roma)" href="explorar.html#roma" data-zone="roma"><i></i>02 · Roma Norte</a>
+      <a class="zbtn" style="--zc:var(--cond)" href="explorar.html#condesa" data-zone="condesa"><i></i>02 · Condesa</a>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ===== fondo nocturno en movimiento: luces de neón que derivan y estrellas que titilan ===== */
+(() => {
+  const RM = matchMedia('(prefers-reduced-motion: reduce)');
+  const cv = document.createElement('canvas'); cv.id = 'bgfx'; cv.setAttribute('aria-hidden', 'true');
+  document.body.prepend(cv);
+  const cx = cv.getContext('2d'); let W = 0, H = 0, dpr = 1;
+  const root = document.documentElement;
+  const rgb = v => { const s = getComputedStyle(root).getPropertyValue(v).trim(); if (/^\d/.test(s)) return s.split(',').map(Number); const m = s.match(/#([0-9a-f]{6})/i); return m ? [0, 2, 4].map(i => parseInt(m[1].slice(i, i + 2), 16)) : null; };
+  function cols() {
+    const acc = rgb('--acc-rgb'), roma = rgb('--roma') || [157, 112, 250], cond = rgb('--cond') || [247, 70, 138];
+    return acc ? [acc, rgb('--acc2-rgb') || acc, acc] : [roma, cond, [92, 60, 190]];
+  }
+  let C = cols();
+  new MutationObserver(() => { C = cols(); }).observe(root, { attributes: true, attributeFilter: ['data-zone'] });
+  const blobs = [
+    { x: .8, y: .25, r: .95, sx: .00007, sy: .00005, ph: 0, a: .038, c: 0 },
+    { x: .2, y: .75, r: .95, sx: .00005, sy: .00008, ph: 2, a: .034, c: 1 },
+    { x: .5, y: .5, r: 1.1, sx: .00004, sy: .00004, ph: 4, a: .028, c: 2 },
+  ];
+  let stars = [];
+  function size() {
+    dpr = Math.min(1.5, devicePixelRatio || 1); W = innerWidth; H = innerHeight;
+    cv.width = Math.round(W * dpr * .6); cv.height = Math.round(H * dpr * .6);
+    stars = Array.from({ length: Math.round(W * H / 16000) }, () => ({ x: Math.random(), y: Math.random(), s: Math.random() * 1.1 + .3, p: Math.random() * 6.28, v: .4 + Math.random() * 1.4 }));
+  }
+  size(); addEventListener('resize', size);
+  let last = 0;
+  function draw(t) {
+    requestAnimationFrame(draw);
+    if (t - last < 40) return; last = t;
+    const w = cv.width, h = cv.height, sc = w / W;
+    cx.clearRect(0, 0, w, h);
+    const scroll = scrollY / Math.max(1, document.documentElement.scrollHeight - H);
+    const beat = parseFloat(getComputedStyle(root).getPropertyValue('--beat')) || 0;
+    cx.globalCompositeOperation = 'lighter';
+    for (const b of blobs) {
+      const x = (b.x + Math.sin(t * b.sx + b.ph) * .1) * w, y = (b.y + Math.cos(t * b.sy + b.ph) * .08) * h;
+      const r = b.r * Math.max(w, h) * (1 + beat * .08), c = C[b.c];
+      const g = cx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},${b.a * (1 + beat * .25)})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+      cx.fillStyle = g; cx.fillRect(0, 0, w, h);
+    }
+    cx.globalCompositeOperation = 'source-over';
+    for (const s of stars) {
+      const a = .08 + (Math.sin(t * .001 * s.v + s.p) * .5 + .5) * .32;
+      cx.fillStyle = `rgba(244,241,248,${a.toFixed(3)})`;
+      const y = ((s.y - scroll * .08 * s.s) % 1 + 1) % 1;
+      cx.fillRect(s.x * w, y * h, s.s * sc * 1.2, s.s * sc * 1.2);
+    }
+  }
+  if (!RM.matches) requestAnimationFrame(draw); else { cv.style.display = 'none'; }
+})();
+
+/* ===== aparición de secciones al hacer scroll ===== */
+(() => {
+  const RM = matchMedia('(prefers-reduced-motion: reduce)');
+  const sel = ['main section > *', 'main .body > *', 'main .wide > *', 'main figure', '.place', '.dz', '.ctx3 article', '.ctxill > *', '.two > div', '.tbl tr', '.triad > *', '.abd > *', '.scen > *', '.eth > *', '.proc > li', '.codes > *', '.grid3 > *', '.facts > *', '.read > div', '.metrics > *', '.next > *', '.close > *', '.hero > *', '.stage > *', '.panel', '.night', '.ex-l > *', '.cover-r > *', 'footer'];
+  const seen = new Set();
+  const skip = el => el.closest('.mph-wrap') || el.closest('.title') || el.closest('.ill') || el.matches('script,style,svg *') || el.closest('.topbar');
+  document.querySelectorAll(sel.join(',')).forEach(el => {
+    if (seen.has(el) || skip(el)) return;
+    // si un ancestro ya se anima, no animar de nuevo (evita doble desplazamiento)
+    for (let p = el.parentElement; p; p = p.parentElement) if (seen.has(p)) { if (p.children.length > 1 && p.matches('.triad,.abd,.scen,.eth,.proc,.codes,.facts,.read,.ctx3,.ctxill,.places,.dens,.metrics,.grid3,.two')) break; return; }
+    seen.add(el);
+    el.classList.add('rv');
+    const sib = [...el.parentElement.children].filter(x => !x.matches('script,style'));
+    el.style.setProperty('--rd', Math.min(6, sib.indexOf(el)));
+    if (el.matches('.lab')) el.classList.add('rv-l');
+  });
+  const ills = [...document.querySelectorAll('.ill')];
+  if (RM.matches || !('IntersectionObserver' in window)) { document.querySelectorAll('.rv').forEach(e => e.classList.add('in')); ills.forEach(e => e.classList.add('in', 'on')); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const t = e.target; t.classList.add('in'); io.unobserve(t);
+    if (t.classList.contains('ill')) setTimeout(() => t.classList.add('on'), 1900);
+    t.querySelectorAll('[data-count]').forEach(countUp);
+    if (t.matches('[data-count]')) countUp(t);
+  }), { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+  document.querySelectorAll('.rv').forEach(e => io.observe(e));
+  ills.forEach(e => io.observe(e));
+  function countUp(n) {
+    if (n.dataset.counted) return; n.dataset.counted = 1;
+    const txt = n.textContent, m = txt.match(/-?\d+([.,]\d+)?/); if (!m) return;
+    const to = parseFloat(m[0].replace(',', '.')), dec = (m[1] || '').length - (m[1] ? 1 : 0), t0 = performance.now();
+    const st = t => { const k = Math.min(1, (t - t0) / 1100), e = 1 - Math.pow(1 - k, 3); n.textContent = txt.replace(m[0], (to * e).toFixed(dec)); if (k < 1) requestAnimationFrame(st); else n.textContent = txt; };
+    requestAnimationFrame(st);
+  }
+  // por si la página carga ya desplazada o la sección es más alta que la ventana
+  addEventListener('load', () => setTimeout(() => document.querySelectorAll('.rv:not(.in)').forEach(e => { const r = e.getBoundingClientRect(); if (r.top < innerHeight && r.bottom > 0) e.classList.add('in'); }), 300));
+})();
+</script>
+
+
+<script>
+(() => {
+  const SIM = [{"n": "Wichitos", "z": "c", "a": 90, "p": 76}, {"n": "Wallace Whisky Bar", "z": "c", "a": 90, "p": 71}, {"n": "Celtics Pub", "z": "c", "a": 140, "p": 125}, {"n": "Salón Malafama", "z": "c", "a": 160, "p": 143}, {"n": "Drunkendog", "z": "c", "a": 150, "p": 126}, {"n": "La Xampa", "z": "c", "a": 110, "p": 101}, {"n": "Trampa", "z": "c", "a": 90, "p": 71}, {"n": "Licorería Limantour", "z": "r", "a": 90, "p": 76}, {"n": "Rayo", "z": "r", "a": 150, "p": 79}, {"n": "Tlecān", "z": "r", "a": 70, "p": 63}, {"n": "Balmori Rooftop", "z": "r", "a": 250, "p": 212}, {"n": "Maison Artemisia", "z": "r", "a": 120, "p": 77}, {"n": "El Palenquito", "z": "r", "a": 90, "p": 72}, {"n": "Traspatio", "z": "r", "a": 220, "p": 174}, {"n": "Ladina Bar", "z": "r", "a": 110, "p": 77}, {"n": "Diablo Negro Mezcal & Cocktail Bar", "z": "r", "a": 180, "p": 123}, {"n": "Departamento", "z": "r", "a": 350, "p": 264}, {"n": "Bar Oriente", "z": "r", "a": 160, "p": 109}, {"n": "Mamá Rumba", "z": "r", "a": 300, "p": 254}, {"n": "Oropel", "z": "r", "a": 90, "p": 75}, {"n": "Gin Gin Condesa", "z": "c", "a": 130, "p": 107}, {"n": "La Cervecería de Barrio Condesa", "z": "c", "a": 180, "p": 120}];
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const RM = matchMedia('(prefers-reduced-motion: reduce)');
+  $$('[data-zone]').forEach(a => a.addEventListener('click', () => { try { sessionStorage.setItem('pn-zone', a.dataset.zone); } catch (e) {} }));
+
+  /* ---------- escala de tempo ---------- */
+  function buildScale() {
+    const svg = $('#tempoScale'), W = Math.max(320, Math.round(svg.parentElement.clientWidth)), narrow = W < 620, H = narrow ? 240 : 214;
+    const x0 = 8, x1 = W - 8, X = b => x0 + b / 240 * (x1 - x0);
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.innerHTML = '';
+    const T = [[0, 40, 'Grave'], [40, 66, 'Largo'], [66, 76, 'Adagio'], [76, 108, 'Andante'], [108, 120, 'Moderato'], [120, 168, 'Allegro'], [168, 200, 'Presto'], [200, 240, 'Prestissimo']];
+    const y0 = 34;
+    T.forEach(([a, b, n], i) => {
+      el('rect', { x: X(a), y: y0, width: X(b) - X(a) - 1, height: 26, fill: `rgba(201,178,255,${.05 + i * .045})` }, svg);
+      const w = X(b) - X(a), fits = w > n.length * 7.6 + 10;
+      if (fits) { const t = el('text', { class: 'term', x: (X(a) + X(b)) / 2, y: y0 + 18, 'text-anchor': 'middle' }, svg); t.textContent = n.toLowerCase(); }
+      else if (!narrow) { const cx = (X(a) + X(b)) / 2; el('line', { x1: cx, x2: cx, y1: y0 - 8, y2: y0 - 1, stroke: '#5C5768' }, svg); const t = el('text', { class: 'term', x: cx, y: y0 - 13, 'text-anchor': 'middle' }, svg); t.textContent = n.toLowerCase(); }
+    });
+    for (let b = 0; b <= 240; b += 40) { el('line', { x1: X(b), x2: X(b), y1: y0 + 26, y2: y0 + 32, stroke: '#34303D' }, svg); const t = el('text', { x: X(b), y: y0 + 46, 'text-anchor': b === 0 ? 'start' : b === 240 ? 'end' : 'middle' }, svg); t.textContent = b + (b === 240 ? ' BPM' : ''); }
+    const G = [[90, 100, 'reggaetón'], [120, 130, 'house'], [125, 145, 'techno'], [160, 180, 'salsa rápida']];
+    { const t = el('text', { class: 'lbl', x: x0, y: y0 + 78 }, svg); t.textContent = 'GÉNEROS · BPM TÍPICO'; }
+    G.forEach(([a, b, n], i) => { const y = y0 + 104 + (i % 2) * 40; el('rect', { x: X(a), y, width: X(b) - X(a), height: 6, rx: 3, fill: '#8C8698' }, svg); const t = el('text', { class: 'gen', x: (X(a) + X(b)) / 2, y: y - 7, 'text-anchor': 'middle' }, svg); t.textContent = n; });
+    for (const [b, n, c] of []) {
+      el('line', { x1: X(b), x2: X(b), y1: y0 - 14, y2: y0 + 112, stroke: c, 'stroke-width': 2 }, svg);
+      el('circle', { cx: X(b), cy: y0 - 14, r: 4.5, fill: c }, svg);
+      const t = el('text', { x: X(b) + (b === 163 ? 8 : -8), y: y0 - 18, 'text-anchor': b === 163 ? 'start' : 'end', fill: c }, svg); t.textContent = n; t.style.fill = c;
+    }
+  }
+
+  /* ---------- simulación de escenarios ---------- */
+  const V = SIM.slice().sort((a, b) => b.p / b.a - a.p / a.a);
+  const N = V.reduce((s, v) => s + v.p, 0);
+  const S = { a: 0, resp: false };
+  function simulate() {
+    const a = S.a / 100;
+    // sin diseño responsable, la gente sigue el brillo: los lugares que ya se ven más llenos
+    const w = V.map(v => S.resp ? Math.max(0, v.a - v.p) : Math.pow(v.p / v.a, 10) * v.a);
+    const sw = w.reduce((s, x) => s + x, 0) || 1;
+    return V.map((v, i) => (1 - a) * v.p + a * N * w[i] / sw);
+  }
+  let simEls = [], SC;
+  function buildSim() {
+    const svg = $('#simChart'), W = Math.max(320, Math.round(svg.parentElement.clientWidth - 48)), Hh = W < 620 ? 220 : 260;
+    const x0 = 34, x1 = W - 4, y0 = 12, y1 = Hh - 28, max = 2.2;
+    const bw = (x1 - x0) / V.length;
+    SC = { y0, y1, max, Y: r => y1 - Math.min(max, r) / max * (y1 - y0) };
+    svg.setAttribute('viewBox', `0 0 ${W} ${Hh}`); svg.innerHTML = '';
+    const g = el('g', { class: 'grid' }, svg);
+    for (const r of [0, .5, 1, 1.5, 2]) { el('line', { x1: x0, x2: x1, y1: SC.Y(r), y2: SC.Y(r) }, g); const t = el('text', { x: x0 - 6, y: SC.Y(r) + 4, 'text-anchor': 'end' }, g); t.textContent = Math.round(r * 100) + '%'; }
+    simEls = V.map((v, i) => {
+      const x = x0 + i * bw + 1, w = Math.max(1, bw - 2);
+      const base = el('rect', { class: 'bar', x, width: w, y: y1, height: 0, rx: 1.5, fill: v.z === 'r' ? '#9D70FA' : '#F7468A' }, svg);
+      const over = el('rect', { class: 'bar over', x, width: w, y: SC.Y(1), height: 0, rx: 1.5 }, svg);
+      const tt = el('title', {}, base);
+      return { base, over, tt, v };
+    });
+    el('line', { class: 'cap100', x1: x0, x2: x1, y1: SC.Y(1), y2: SC.Y(1) }, svg);
+    const t = el('text', { x: x0, y: y1 + 20 }, svg); t.textContent = 'más lleno ←';
+    const t2 = el('text', { x: x1, y: y1 + 20, 'text-anchor': 'end' }, svg); t2.textContent = '→ más vacío (orden inicial)';
+    update();
+  }
+  const FIC = {
+    P: ['Ficción · viernes 15 de octubre de 2027, 23:40', 'Daniela abre Pulso Nocturno en la fila de los tacos. Condesa ya late en allegro; Roma Norte todavía va en andante. Lo comenta con sus amigos, se ríen de lo rápido que va Mezontle y siguen el plan de siempre: el bar de la esquina, el que ya conocen.'],
+    U: ['Ficción · viernes 15 de octubre de 2027, 23:40', 'La app no le dice a Daniela dónde está «lo más prendido», sino dónde todavía cabe gente. Prueban un bar de Tamaulipas que va en andante. A la 01:00 ese lugar ya suena en allegro, y el de enfrente, que iba saturado, por fin respira.'],
+    D: ['Ficción · viernes 15 de octubre de 2027, 23:40', 'Todos vieron lo mismo: Licorería Limantour en presto. A las 00:30 la fila da vuelta a la cuadra, los vecinos de Álvaro Obregón llaman a la alcaldía por el ruido y tres bares de Condesa cierran temprano por falta de gente. El mapa ya no mide la noche: la fabrica.'],
+  };
+  let lastSc = '';
+  function update() {
+    const P = simulate();
+    let sat = 0, q = 0, empty = 0;
+    P.forEach((p, i) => {
+      const e = simEls[i], r = p / e.v.a, rb = Math.min(1, r);
+      e.base.setAttribute('y', SC.Y(rb)); e.base.setAttribute('height', SC.y1 - SC.Y(rb));
+      const ro = Math.max(0, r - 1); e.over.setAttribute('y', SC.Y(1 + ro)); e.over.setAttribute('height', SC.Y(1) - SC.Y(1 + ro));
+      e.tt.textContent = `${e.v.n}: ${Math.round(p)} personas de ${e.v.a} (${Math.round(r * 100)} %)`;
+      if (r > 1) { sat++; q += p - e.v.a; } if (r < .25) empty++;
+    });
+    const top = P.slice().sort((a, b) => b - a).slice(0, 5).reduce((s, x) => s + x, 0) / N;
+    $('#mSat').textContent = sat; $('#mQ').textContent = Math.round(q); $('#mTop').textContent = Math.round(top * 100) + ' %'; $('#mEmpty').textContent = empty;
+    $('#mSat').classList.toggle('warn', sat > 0); $('#mQ').classList.toggle('warn', q > 0);
+    $('#adoptV').textContent = S.a + ' %';
+    const sc = S.a < 8 ? 'P' : S.resp ? 'U' : 'D';
+    ['P', 'U', 'D'].forEach(k => $('#sc' + k).classList.toggle('on', k === sc));
+    $('#simTitle').textContent = sc === 'P' ? 'Casi nadie cambia su plan: la noche sigue su curso.' : sc === 'U' ? `Con ${S.a} % siguiendo sugerencias de espacio, ningún lugar rebasa su aforo y ${empty} quedan casi vacíos.` : `Con ${S.a} % siguiendo «lo más rápido», ${sat} ${sat === 1 ? 'lugar rebasa' : 'lugares rebasan'} su aforo y ${Math.round(q)} personas hacen fila.`;
+    if (sc !== lastSc) { lastSc = sc; $('#ficK').textContent = FIC[sc][0]; const b = $('#fic'); b.textContent = FIC[sc][1]; b.classList.remove('swap'); void b.offsetWidth; b.classList.add('swap'); }
+  }
+  $('#adopt').addEventListener('input', e => { S.a = +e.target.value; update(); });
+  $('#resp').addEventListener('click', e => { S.resp = !S.resp; e.currentTarget.setAttribute('aria-pressed', S.resp); update(); });
+
+  buildScale(); buildSim();
+  // demostración inicial: la adopción sube sola una vez al entrar en pantalla
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => { if (es.some(e => e.isIntersecting) && !RM.matches && S.a === 0) { io.disconnect(); let k = 0; const t = setInterval(() => { k += 1; S.a = k; $('#adopt').value = k; update(); if (k >= 35) clearInterval(t); }, 45); } }, { threshold: .4 }) : null;
+  if (io) io.observe($('#simChart'));
+  let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { buildScale(); buildSim(); }, 150); });
+})();
+</script>
+</body>
+</html>
